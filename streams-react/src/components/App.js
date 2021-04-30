@@ -1,6 +1,16 @@
+import {BrowserRouter, Switch, Route} from "react-router-dom";
+import HomeContainer from "./HomeContainer/HomeContainer";
+import RoomContainer from "./RoomContainer/RoomContainer";
+
 const App = () => {
+
   return(
-    <div>HI</div>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/" exact component={HomeContainer} />
+        <Route path="/room/:id" component={RoomContainer} />
+      </Switch>
+    </BrowserRouter>
   );
 };
 
