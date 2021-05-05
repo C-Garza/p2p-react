@@ -52,6 +52,35 @@ const SocketContextProvider = ({children}) => {
         }
       });
     };
+    const setPeerListeners = (stream) => {
+      // WHEN THE USER HAS CALLED
+      peer.on("call", call => {
+        call.answer(stream);
+  
+        // WHEN THE HOST RECIEVES A STREAM
+        call.on("stream", userVideoStream => {
+          addVideo(call.peer, userVideoStream, call, userVideoStream)
+        });
+        // WHEN THE USER HAS CLOSED
+        call.on("close", () => {
+          removeVideo();
+        });
+      });
+    };
+  
+    const connectToNewUser = (userID, stream) => {
+      // CALLING A USER
+      const call = peer.call(userID, stream);
+  
+      // WHEN USER IS CALLED
+      call.on("stream", newUserStream => {
+        addVideo(userID, newUserStream, call, call._remoteStream);
+      });
+      // WHEN USER HAS CLOSED
+      call.on("close", async () => {
+        removeVideo();
+      });
+    };
 
     // IF IN ROOM SET UP LISTENERS
     if(params) {
@@ -80,40 +109,13 @@ const SocketContextProvider = ({children}) => {
       if(socket) {
         socket.removeAllListeners("user-connected");
         socket.removeAllListeners("user-disconnected");
-        peer.destory();
+        socket.close();
+        peer.destroy();
+        setVideoStreams({});
+        setPeers({});
       }
     };
   }, [params]);
-
-  const setPeerListeners = (stream) => {
-    // WHEN THE USER HAS CALLED
-    peer.on("call", call => {
-      call.answer(stream);
-
-      // WHEN THE HOST RECIEVES A STREAM
-      call.on("stream", userVideoStream => {
-        addVideo(call.peer, userVideoStream, call, userVideoStream)
-      });
-      // WHEN THE USER HAS CLOSED
-      call.on("close", () => {
-        removeVideo();
-      });
-    });
-  };
-
-  const connectToNewUser = (userID, stream) => {
-    // CALLING A USER
-    const call = peer.call(userID, stream);
-    
-    // WHEN USER IS CALLED
-    call.on("stream", newUserStream => {
-      addVideo(userID, newUserStream, call, call._remoteStream);
-    });
-    // WHEN USER HAS CLOSED
-    call.on("close", async () => {
-      removeVideo();
-    });
-  };
 
   const addVideo = (id, stream, call, streamID) => {
     setVideoStreams(videoStreams => ({...videoStreams, [stream.id]: stream}));

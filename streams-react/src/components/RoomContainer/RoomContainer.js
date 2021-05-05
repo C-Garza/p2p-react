@@ -18,7 +18,11 @@ const RoomContainer = () => {
 
   useEffect(() => {
     setParams(roomID);
-  }, [setParams, roomID]);
+
+    return () => {
+      setParams("");
+    };
+  }, [setParams, roomID, location]);
 
   return(
     <div>
