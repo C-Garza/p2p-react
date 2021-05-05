@@ -7,7 +7,7 @@ import homeInputs from "../../data/homeInputs";
 
 const HomeContainer = () => {
   const history = useHistory();
-  const {values, handleChange, resetForm, clearForm} = useForm({username: "", room: ""});
+  const {values, handleChange} = useForm({username: "", room: ""});
   const [fetchError, setFetchError] = useState(false);
 
   const inputs = homeInputs.map(input => {
