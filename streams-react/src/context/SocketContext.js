@@ -11,22 +11,34 @@ const SocketContextProvider = ({children}) => {
   const [params, setParams] = useState("");
   const [videoStreams, setVideoStreams] = useState({});
   const [peers, setPeers] = useState({});
+  const [users, setUsers] = useState({});
+  const [displayName, setDisplayName] = useState("");
 
   const videoRefs = useRef(videoStreams);
   const peersRefs = useRef(peers);
+  const usersRefs = useRef(users);
+  const displayNameRef = useRef(displayName);
 
   useEffect(() => {
     // SET REFS SO EVENT LISTENERS CAN ACCESS CURRENT STATE
     videoRefs.current = videoStreams;
     peersRefs.current = peers;
-  }, [videoStreams, peers]);
+    usersRefs.current = users;
+    displayNameRef.current = displayName;
+  }, [videoStreams, peers, users, displayName]);
 
   useEffect(() => {
     const getStream = () => {
       navigator.mediaDevices.getUserMedia({video: true, audio: true})
         .then(currentStream => {
           // SET USER STREAM
-          setVideoStreams(videoStreams => ({...videoStreams, [currentStream.id]: currentStream}));
+          setVideoStreams(videoStreams => ({
+            ...videoStreams, 
+            [currentStream.id]: {
+              streamID: currentStream,
+              displayName: usersRefs.current[peer.id].displayName
+            }
+          }));
   
           // SET UP LISTENERS
           setUserConnection(currentStream);
@@ -59,7 +71,7 @@ const SocketContextProvider = ({children}) => {
   
         // WHEN THE HOST RECIEVES A STREAM
         call.on("stream", userVideoStream => {
-          addVideo(call.peer, userVideoStream, call, userVideoStream)
+          addVideo(call.peer, userVideoStream, call, userVideoStream);
         });
         // WHEN THE USER HAS CLOSED
         call.on("close", () => {
@@ -77,7 +89,7 @@ const SocketContextProvider = ({children}) => {
         addVideo(userID, newUserStream, call, call._remoteStream);
       });
       // WHEN USER HAS CLOSED
-      call.on("close", async () => {
+      call.on("close", () => {
         removeVideo();
       });
     };
@@ -86,6 +98,9 @@ const SocketContextProvider = ({children}) => {
     if(params) {
       socket = io("http://localhost:3001", {
         reconnection: true
+      });
+      socket.on("users-list", userList => {
+        setUsers({...userList});
       });
       socket.on("error", (e) => {
         console.log(e);
@@ -96,7 +111,7 @@ const SocketContextProvider = ({children}) => {
         path: "/peerjs"
       });
       peer.on("open", id => {
-        socket.emit("join-room", params, id);
+        socket.emit("join-room", params, id, displayNameRef.current);
         getStream();
       });
       peer.on("error", (e) => {
@@ -117,16 +132,22 @@ const SocketContextProvider = ({children}) => {
     };
   }, [params]);
 
-  const addVideo = (id, stream, call, streamID) => {
-    setVideoStreams(videoStreams => ({...videoStreams, [stream.id]: stream}));
-    setPeers(peers => ({...peers, [id]: {call, streamID}}));
+  const addVideo = (id, stream, call, callStreamID) => {
+    setVideoStreams(videoStreams => ({
+      ...videoStreams, 
+      [stream.id]: {
+        streamID: stream,
+        displayName: usersRefs.current[id].displayName
+      }
+    }));
+    setPeers(peers => ({...peers, [id]: {call, callStreamID}}));
   };
 
   const removeVideo = async () => {
     const prom = await new Promise(resolve => setTimeout(() => resolve(videoRefs.current)), 0);
     const streams = prom;
-    for(const [key, value]of Object.entries(streams)) {
-      if(!value.active) {
+    for(const [key, value] of Object.entries(streams)) {
+      if(!value.streamID.active) {
         let {[key]: tmp, ...rest} = streams;
         setVideoStreams(rest);
         return;
@@ -137,6 +158,8 @@ const SocketContextProvider = ({children}) => {
   return (
     <SocketContext.Provider value={{
       videoStreams,
+      displayNameRef,
+      setDisplayName,
       setParams
     }}>
       {children}

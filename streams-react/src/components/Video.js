@@ -1,6 +1,6 @@
 import {useEffect, useRef} from "react";
 
-const Video = ({stream}) => {
+const Video = ({stream, displayName}) => {
   const video = useRef(stream);
 
   useEffect(() => {
@@ -9,7 +9,10 @@ const Video = ({stream}) => {
     }
   }, [video, stream]);
   return (
-    <video id={video.current.id} playsInline ref={video} autoPlay muted></video>
+    <>
+      <video id={video.current.id} playsInline ref={video} autoPlay muted></video>
+      <p>{displayName || "Silly Goose"}</p>
+    </>
   );
 };
 
