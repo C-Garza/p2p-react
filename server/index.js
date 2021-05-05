@@ -1,24 +1,14 @@
-const express = require("express");
-const http = require("http");
-const socketio = require("socket.io");
-const {v4: uuidV4} = require("uuid");
+require("dotenv").config();
+const server = require("./servers/app");
+const peerApp = require("./servers/peer");
+const peerSocketConnection = require("./sockets/peerSocket");
 
-const app = express();
-const port = process.env.PORT || 3001;
+peerSocketConnection(server);
 
-const server = http.createServer(app);
-const io = socketio(server);
-
-app.get("/api/uuid", (req, res) => {
-  res.send({id: uuidV4()});
+server.listen(process.env.PORT, () => {
+  console.log(`Server is listening on ${process.env.PORT}`);
 });
 
-io.on("connection", socket => {
-  socket.on("join-room", (roomID, userID) => {
-    console.log(roomID, userID);
-  });
-});
-
-server.listen(port, () => {
-  console.log(`Server is listening on ${port}`);
+peerApp.listen(9000, () => {
+  console.log(`Server is listening on 9000`);
 });
