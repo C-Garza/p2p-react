@@ -13,11 +13,14 @@ const SocketContextProvider = ({children}) => {
   const [peers, setPeers] = useState({});
   const [users, setUsers] = useState({});
   const [displayName, setDisplayName] = useState("");
+  const [roomName, setRoomName] = useState("");
 
+  // TO DO: Find another solution for all these refs
   const videoRefs = useRef(videoStreams);
   const peersRefs = useRef(peers);
   const usersRefs = useRef(users);
   const displayNameRef = useRef(displayName);
+  const roomNameRef = useRef(roomName);
 
   useEffect(() => {
     // SET REFS SO EVENT LISTENERS CAN ACCESS CURRENT STATE
@@ -25,9 +28,41 @@ const SocketContextProvider = ({children}) => {
     peersRefs.current = peers;
     usersRefs.current = users;
     displayNameRef.current = displayName;
-  }, [videoStreams, peers, users, displayName]);
+    roomNameRef.current = roomName;
+  }, [videoStreams, peers, users, displayName, roomName]);
 
   useEffect(() => {
+    const initSocket = () => {
+      socket = io("http://localhost:3001", {
+        reconnection: true
+      });
+      socket.on("users-list", userList => {
+        setUsers({...userList});
+      });
+      socket.on("room-name", room => {
+        setRoomName(room);
+      });
+      socket.on("error", (e) => {
+        console.log(e);
+      });
+    };
+    
+    const initPeer = () => {
+      peer = new Peer({
+        host: "/",
+        port: "9000",
+        path: "/peerjs"
+      });
+      peer.on("open", id => {
+        socket.emit("join-room", params, id, displayNameRef.current, roomNameRef.current);
+        getStream();
+      });
+      peer.on("error", (e) => {
+        console.log(e);
+        if(peer.disconnected) peer.reconnect();
+      });
+    };
+
     const getStream = () => {
       navigator.mediaDevices.getUserMedia({video: true, audio: true})
         .then(currentStream => {
@@ -50,9 +85,7 @@ const SocketContextProvider = ({children}) => {
     const setUserConnection = (stream) => {
       socket.on("user-connected", userID => {
         console.log("HAS JOINED!: " + userID);
-        // connectToNewUser(userID, stream);
-        // TO-DO: Figure out why call is triggered before event listener
-        setTimeout(() => connectToNewUser(userID, stream), 200);
+        connectToNewUser(userID, stream);
       });
       socket.on("user-disconnected", (userID) => {
         console.log("User has disconnected!" + userID);
@@ -63,6 +96,7 @@ const SocketContextProvider = ({children}) => {
           setPeers(rest);
         }
       });
+      socket.emit("stream-ready");
     };
     const setPeerListeners = (stream) => {
       // WHEN THE USER HAS CALLED
@@ -96,28 +130,8 @@ const SocketContextProvider = ({children}) => {
 
     // IF IN ROOM SET UP LISTENERS
     if(params) {
-      socket = io("http://localhost:3001", {
-        reconnection: true
-      });
-      socket.on("users-list", userList => {
-        setUsers({...userList});
-      });
-      socket.on("error", (e) => {
-        console.log(e);
-      });
-      peer = new Peer({
-        host: "/",
-        port: "9000",
-        path: "/peerjs"
-      });
-      peer.on("open", id => {
-        socket.emit("join-room", params, id, displayNameRef.current);
-        getStream();
-      });
-      peer.on("error", (e) => {
-        console.log(e);
-        if(peer.disconnected) peer.reconnect();
-      });
+      initSocket();
+      initPeer();
     }
 
     return () => {
@@ -144,6 +158,7 @@ const SocketContextProvider = ({children}) => {
   };
 
   const removeVideo = async () => {
+    // TO-DO: Figure out how to wait for peer to disconnect and remove video from view
     const prom = await new Promise(resolve => setTimeout(() => resolve(videoRefs.current)), 0);
     const streams = prom;
     for(const [key, value] of Object.entries(streams)) {
@@ -159,7 +174,9 @@ const SocketContextProvider = ({children}) => {
     <SocketContext.Provider value={{
       videoStreams,
       displayNameRef,
+      roomName,
       setDisplayName,
+      setRoomName,
       setParams
     }}>
       {children}

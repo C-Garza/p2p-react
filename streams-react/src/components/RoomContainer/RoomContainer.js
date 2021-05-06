@@ -5,7 +5,7 @@ import Video from "../Video";
 import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
 
 const RoomContainer = () => {
-  const {setParams, displayNameRef, setDisplayName, videoStreams} = useContext(SocketContext);
+  const {setParams, setDisplayName, roomName: hostRoomName, setRoomName: setHostRoomName, videoStreams} = useContext(SocketContext);
   const location = useLocation();
   const [userName, setUserName] = useStateToLocalStorage("userName");
   const [roomName, setRoomName] = useStateToLocalStorage("roomName");
@@ -21,7 +21,8 @@ const RoomContainer = () => {
 
   useEffect(() => {
     setDisplayName(userName);
-  }, [userName]);
+    setHostRoomName(roomName);
+  }, [userName, setDisplayName, roomName, setHostRoomName]);
 
   useEffect(() => {
     setParams(roomID);
@@ -33,7 +34,7 @@ const RoomContainer = () => {
 
   return(
     <div>
-      <h2>Room Name: {roomName}</h2>
+      <h2>Room Name: {roomName || hostRoomName}</h2>
       {renderVideo()}
     </div>
   );
