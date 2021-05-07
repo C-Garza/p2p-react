@@ -1,8 +1,10 @@
 import {useEffect, useContext} from "react";
 import {SocketContext} from "../../context/SocketContext";
 import {useLocation} from "react-router-dom";
-import Video from "../Video";
+import VideoRoomHeader from "../VideoRoomHeader/VideoRoomHeader";
+import VideoContainer from "../VideosContainer/VideosContainer";
 import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
+import styles from "./RoomContainer.module.css";
 
 const RoomContainer = () => {
   const {setParams, setDisplayName, roomName: hostRoomName, setRoomName: setHostRoomName, videoStreams} = useContext(SocketContext);
@@ -12,12 +14,6 @@ const RoomContainer = () => {
 
   const searchParams = location.pathname.split("/");
   const roomID = searchParams[searchParams.length - 1];
-  
-  const renderVideo = () => {
-    return Object.values(videoStreams).map((video, i) => {
-      return <Video key={i} stream={video.streamID} displayName={video.displayName} />;
-    });
-  };
 
   useEffect(() => {
     setDisplayName(userName);
@@ -33,9 +29,9 @@ const RoomContainer = () => {
   }, [setParams, roomID, location]);
 
   return(
-    <div>
-      <h2>Room Name: {roomName || hostRoomName}</h2>
-      {renderVideo()}
+    <div className={styles.container}>
+      <VideoRoomHeader room={roomName || hostRoomName} />
+      <VideoContainer videos={videoStreams} />
     </div>
   );
 };

@@ -1,0 +1,26 @@
+.button {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #455A64;
+  color: #EEEEEE;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: transform 0.05s, background-color 0.1s ease-out;
+}
+.button:hover {
+  color: white;
+  background-color: #546E7A;
+}
+.button:active {
+  transform: translateY(2px);
+  box-shadow: 0 0px 2px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.22);
+}
+.copy {
+  margin-left: 10px;
+  border-radius: 3px;
+}
+.hidden {
+  display: none;
+  position: absolute;
+  left: -1000px;
+}

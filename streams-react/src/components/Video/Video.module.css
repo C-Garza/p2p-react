@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  margin: 15px;
+  border: 3px solid #1A659E;
+  /* border: 3px solid #C7EFCF; GREEN*/
+  border-radius: 5px;
+  color: white;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* border: 5px solid transparent; */
+  overflow: hidden;
+}
+.video {
+  border-radius: 5px;
+}
+.displayname {
+  position: absolute;
+  bottom: 0;
+  left: 15px;
+  font-size: 1.2em;
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 5px;
+  z-index: 1;
+}
+.displayname:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  z-index: -1;
+}

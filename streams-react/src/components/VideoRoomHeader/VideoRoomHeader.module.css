@@ -1,0 +1,9 @@
+.header {
+  color: white;
+  text-align: center;
+  text-transform: capitalize;
+}
+.heading {
+  margin-bottom: 15px;
+  text-decoration: underline;
+}

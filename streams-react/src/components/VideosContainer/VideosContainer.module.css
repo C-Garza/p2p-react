@@ -1,0 +1,6 @@
+.videos {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  margin-top: 15px;
+}
