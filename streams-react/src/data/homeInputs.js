@@ -4,14 +4,16 @@ const createInputs = [
     label: "Display Name",
     name: "username",
     required: true,
-    username: ""
+    username: "",
+    id: "username-1"
   },
   {
     type: "text",
     label: "Room",
     name: "room",
     required: true,
-    room: ""
+    room: "",
+    id: "room-1"
   }
 ];
 
@@ -21,14 +23,16 @@ const joinInputs = [
     label: "Display Name",
     name: "username",
     required: true,
-    username: ""
+    username: "",
+    id: "username-2"
   },
   {
     type: "text",
     label: "Room ID",
     name: "room",
     required: true,
-    room: ""
+    room: "",
+    id: "room-2"
   }
 ];
 

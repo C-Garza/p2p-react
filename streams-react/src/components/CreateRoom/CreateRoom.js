@@ -4,6 +4,7 @@ import RoomForm from "../RoomForm/RoomForm";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import useForm from "../../hooks/useForm";
 import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
+import styles from "./CreateRoom.module.css";
 
 const CreateRoom = ({header, inputs}) => {
   const history = useHistory();
@@ -36,8 +37,8 @@ const CreateRoom = ({header, inputs}) => {
   };
 
   return(
-    <div>
-      <h1>{header}</h1>
+    <div className={styles.container}>
+      <h1 className={styles.header}>{header}</h1>
       <RoomForm inputs={formInputs} handleChange={handleChange} handleSubmit={onSubmit} />
       <ErrorMessage error={fetchError} />
     </div>
