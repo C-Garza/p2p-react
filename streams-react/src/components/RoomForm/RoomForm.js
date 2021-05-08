@@ -3,20 +3,38 @@ import SubmitButton from "../SubmitButton/SubmitButton";
 import styles from "./RoomForm.module.css";
 
 const RoomForm = ({inputs, handleChange, handleSubmit}) => {
+  const handleClick = async (e) => {
+    const input = document.getElementById(e);
+    
+    if("clipboard" in navigator) {
+      const text = await navigator.clipboard.readText();
+      input.value = text;
+    }
+    else {
+      input.focus();
+      document.execCommand("paste");
+    }
+  };
+
   const renderInputs = inputs.map(input => {
     return (
       <React.Fragment key={input.name}>
         <label className={styles.label} htmlFor={input.id}>{input.label}</label>
-        <input 
-          id={input.id}
-          className={styles.input}
-          type={input.type} 
-          name={input.name} 
-          placeholder={input.label} 
-          required={input.required}
-          value={input[input.name]}
-          onChange={handleChange}
-        />
+        <div className={`${styles.container} ${styles.container__input}`}>
+          <input 
+            id={input.id}
+            className={styles.input}
+            type={input.type} 
+            name={input.name} 
+            placeholder={input.label} 
+            required={input.required}
+            value={input[input.name]}
+            onChange={handleChange}
+          />
+          <button id={`${input.id}__paste`} className={styles.paste} type="button" onClick={() => handleClick(input.id)}>
+            <i className={`fas fa-clipboard`}></i>
+          </button>
+        </div>
       </React.Fragment>
     );
   });
