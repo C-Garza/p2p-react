@@ -26,6 +26,7 @@ export default function useForm(init = {}) {
 
   return {
     values,
+    setValues,
     handleChange,
     resetForm,
     clearForm
