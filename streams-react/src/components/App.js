@@ -9,6 +9,7 @@ const App = () => {
   return(
     <BrowserRouter>
       <NavBar />
+      <div style={{height: "70px"}}></div>
       <Switch>
         <Route path="/" exact component={HomeContainer} />
         <Route path="/room/:id" component={RoomContainer} />

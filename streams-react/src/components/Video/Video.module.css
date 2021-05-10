@@ -5,9 +5,11 @@
   background-color: black;
   margin: 15px;
   border: 3px solid #1A659E;
-  /* border: 3px solid #C7EFCF; GREEN*/
   border-radius: 5px;
   color: white;
+}
+.speaking {
+  border: 3px solid #C7EFCF;
 }
 .wrapper {
   display: flex;
@@ -27,6 +29,7 @@
   left: 15px;
   font-size: 1.2em;
   padding: 5px 10px;
+  margin: 20px 0;
   cursor: pointer;
   border: 1px solid black;
   border-radius: 5px;
@@ -42,4 +45,37 @@
   height: 100%;
   background-color: rgba(0,0,0,0.7);
   z-index: -1;
+}
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  min-width: 45px;
+  bottom: 0;
+  right: 15px;
+  margin: 20px 0;
+  padding: 7px 10px;
+  padding-top: 2px;
+  overflow: hidden;
+  transition: all 0.18s ease;
+}
+.controls:hover {
+  padding-top: 150px;
+}
+.controls--focus {
+  padding-top: 150px;
+}
+.slider {
+  position: absolute;
+  transform: rotate(-90deg) translateX(65%);
+  transition: all 0.35s;
+}
+.volume__button {
+  color: white;
+  cursor: pointer;
+}
+.volume {
+  font-size: 1.2em;
 }

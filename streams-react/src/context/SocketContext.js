@@ -1,6 +1,7 @@
 import {createContext, useState, useEffect, useRef} from "react";
 import {io} from "socket.io-client";
 import Peer from "peerjs";
+import hark from "hark";
 
 const SocketContext = createContext();
 
@@ -9,13 +10,17 @@ let peer = null;
 
 const SocketContextProvider = ({children}) => {
   const [params, setParams] = useState("");
+  const [stream, setStream] = useState({});
   const [videoStreams, setVideoStreams] = useState({});
   const [peers, setPeers] = useState({});
   const [users, setUsers] = useState({});
   const [displayName, setDisplayName] = useState("");
   const [roomName, setRoomName] = useState("");
+  const [isTalking, setIsTalking] = useState({});
+  const [gainStreams, setGainStreams] = useState({});
 
   // TO DO: Find another solution for all these refs
+  const streamRef = useRef(stream);
   const videoRefs = useRef(videoStreams);
   const peersRefs = useRef(peers);
   const usersRefs = useRef(users);
@@ -24,12 +29,13 @@ const SocketContextProvider = ({children}) => {
 
   useEffect(() => {
     // SET REFS SO EVENT LISTENERS CAN ACCESS CURRENT STATE
+    streamRef.current = stream;
     videoRefs.current = videoStreams;
     peersRefs.current = peers;
     usersRefs.current = users;
     displayNameRef.current = displayName;
     roomNameRef.current = roomName;
-  }, [videoStreams, peers, users, displayName, roomName]);
+  }, [stream, videoStreams, peers, users, displayName, roomName]);
 
   useEffect(() => {
     const initSocket = () => {
@@ -66,18 +72,21 @@ const SocketContextProvider = ({children}) => {
     const getStream = () => {
       navigator.mediaDevices.getUserMedia({video: true, audio: true})
         .then(currentStream => {
+          // SET UP LISTENERS
+          setUserConnection(currentStream);
+          setPeerListeners(currentStream);
+          const harkListeners = setUpVolumeControl(currentStream, true);
+
           // SET USER STREAM
+          setStream(currentStream);
           setVideoStreams(videoStreams => ({
             ...videoStreams, 
             [currentStream.id]: {
               streamID: currentStream,
-              displayName: usersRefs.current[peer.id].displayName
+              displayName: usersRefs.current[peer.id].displayName,
+              hark: harkListeners
             }
           }));
-  
-          // SET UP LISTENERS
-          setUserConnection(currentStream);
-          setPeerListeners(currentStream);
         }).catch(e => {
           console.log(e);
       });
@@ -98,6 +107,10 @@ const SocketContextProvider = ({children}) => {
       });
       socket.emit("stream-ready");
     };
+
+    // Fixes PeerJS calling listener for every media track in call
+    let callList = [];
+
     const setPeerListeners = (stream) => {
       // WHEN THE USER HAS CALLED
       peer.on("call", call => {
@@ -105,7 +118,14 @@ const SocketContextProvider = ({children}) => {
   
         // WHEN THE HOST RECIEVES A STREAM
         call.on("stream", userVideoStream => {
-          addVideo(call.peer, userVideoStream, call, userVideoStream);
+          if(!callList[call.peer]) {
+            const harkListeners = setUpVolumeControl(userVideoStream, false);
+            addVideo(call.peer, userVideoStream, call, userVideoStream, harkListeners);
+            callList[call.peer] = call;
+          }
+          else {
+            callList = [];
+          }
         });
         // WHEN THE USER HAS CLOSED
         call.on("close", () => {
@@ -120,7 +140,14 @@ const SocketContextProvider = ({children}) => {
   
       // WHEN USER IS CALLED
       call.on("stream", newUserStream => {
-        addVideo(userID, newUserStream, call, call._remoteStream);
+        if(!callList[call.peer]) {
+          const harkListeners = setUpVolumeControl(newUserStream, false);
+          addVideo(userID, newUserStream, call, call._remoteStream, harkListeners);
+          callList[call.peer] = call;
+        }
+        else {
+          callList = [];
+        }
       });
       // WHEN USER HAS CLOSED
       call.on("close", () => {
@@ -135,23 +162,30 @@ const SocketContextProvider = ({children}) => {
     }
 
     return () => {
-      if(socket) {
+      if(socket && params) {
         socket.removeAllListeners("user-connected");
         socket.removeAllListeners("user-disconnected");
         socket.close();
+        streamRef.current.getAudioTracks()[0].stop();
+        streamRef.current.getVideoTracks()[0].stop();
+        for(const [key, value] of Object.entries(videoRefs.current)) {
+          value.hark.stop();
+        }
         peer.destroy();
         setVideoStreams({});
         setPeers({});
+        setIsTalking({});
       }
     };
   }, [params]);
 
-  const addVideo = (id, stream, call, callStreamID) => {
+  const addVideo = (id, stream, call, callStreamID, harkListeners) => {
     setVideoStreams(videoStreams => ({
       ...videoStreams, 
       [stream.id]: {
         streamID: stream,
-        displayName: usersRefs.current[id].displayName
+        displayName: usersRefs.current[id].displayName,
+        hark: harkListeners
       }
     }));
     setPeers(peers => ({...peers, [id]: {call, callStreamID}}));
@@ -164,10 +198,36 @@ const SocketContextProvider = ({children}) => {
     for(const [key, value] of Object.entries(streams)) {
       if(!value.streamID.active) {
         let {[key]: tmp, ...rest} = streams;
+        streams[key].hark.stop();
         setVideoStreams(rest);
         return;
       }
     }
+  };
+
+  const speechListeners = (stream, audioCtx, gainNode) => {
+    const options = {threshold: -55, audioContext: audioCtx};
+    const speechEvents = hark(stream, options, gainNode);
+
+    speechEvents.on("speaking", () => {
+      setIsTalking(streams => ({...streams, [stream.id]: true}));
+    });
+
+    speechEvents.on("stopped_speaking", () => {
+      setIsTalking(streams => ({...streams, [stream.id]: false}));
+    });
+
+    return speechEvents;
+  };
+
+  const setUpVolumeControl = (stream, isHost) => {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(stream);
+    const gainNode = audioCtx.createGain();
+    setGainStreams(streams => ({...streams, [stream.id]: {gainNode, isHost: isHost}}));
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    return speechListeners(stream, audioCtx, gainNode);
   };
 
   return (
@@ -175,6 +235,8 @@ const SocketContextProvider = ({children}) => {
       videoStreams,
       displayNameRef,
       roomName,
+      isTalking,
+      gainStreams,
       setDisplayName,
       setRoomName,
       setParams

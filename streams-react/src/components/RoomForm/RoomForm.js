@@ -3,14 +3,19 @@ import SubmitButton from "../SubmitButton/SubmitButton";
 import styles from "./RoomForm.module.css";
 
 const RoomForm = ({inputs, handleChange, handleSubmit}) => {
-  const handleClick = async (e) => {
-    const input = document.getElementById(e);
-    
+  const handleClick = async (e, name) => {
     if("clipboard" in navigator) {
       const text = await navigator.clipboard.readText();
-      input.value = text;
+      const synthEvent = {
+        target: {
+          name,
+          value: text
+        }
+      };
+      handleChange(synthEvent);
     }
     else {
+      const input = document.getElementById(e);
       input.focus();
       document.execCommand("paste");
     }
@@ -31,7 +36,7 @@ const RoomForm = ({inputs, handleChange, handleSubmit}) => {
             value={input[input.name]}
             onChange={handleChange}
           />
-          <button id={`${input.id}__paste`} className={styles.paste} type="button" onClick={() => handleClick(input.id)}>
+          <button id={`${input.id}__paste`} className={styles.paste} type="button" onClick={() => handleClick(input.id, input.name)}>
             <i className={`fas fa-clipboard`}></i>
           </button>
         </div>

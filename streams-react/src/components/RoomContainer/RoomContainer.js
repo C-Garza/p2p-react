@@ -7,7 +7,15 @@ import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
 import styles from "./RoomContainer.module.css";
 
 const RoomContainer = () => {
-  const {setParams, setDisplayName, roomName: hostRoomName, setRoomName: setHostRoomName, videoStreams} = useContext(SocketContext);
+  const {
+    setParams, 
+    setDisplayName, 
+    roomName: hostRoomName, 
+    setRoomName: setHostRoomName, 
+    videoStreams, 
+    isTalking, 
+    gainStreams
+  } = useContext(SocketContext);
   const location = useLocation();
   const [userName, setUserName] = useStateToLocalStorage("userName");
   const [roomName, setRoomName] = useStateToLocalStorage("roomName");
@@ -31,7 +39,7 @@ const RoomContainer = () => {
   return(
     <div className={styles.container}>
       <VideoRoomHeader room={roomName || hostRoomName} />
-      <VideoContainer videos={videoStreams} />
+      <VideoContainer videos={videoStreams} isTalking={isTalking} gainStreams={gainStreams} />
     </div>
   );
 };
