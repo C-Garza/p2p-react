@@ -8,7 +8,7 @@ import styles from "./JoinRoom.module.css";
 
 const JoinRoom = ({header, inputs}) => {
   const history = useHistory();
-  const {values, handleChange} = useForm({username: "", room: ""});
+  const {values, handleChange, clearInput} = useForm({username: "", room: ""});
   const [, setUsername] = useStateToLocalStorage("userName");
   const [, setRoomName] = useStateToLocalStorage("roomName");
   const [fetchError, setFetchError] = useState(false);
@@ -36,7 +36,7 @@ const JoinRoom = ({header, inputs}) => {
   return(
     <div className={styles.container}>
       <h1 className={styles.header}>{header}</h1>
-      <RoomForm inputs={formInputs} handleChange={handleChange} handleSubmit={onSubmit} />
+      <RoomForm inputs={formInputs} handleChange={handleChange} handleSubmit={onSubmit} clearInput={clearInput} />
       <ErrorMessage error={fetchError} />
     </div>
   );

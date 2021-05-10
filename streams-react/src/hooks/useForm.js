@@ -23,12 +23,16 @@ export default function useForm(init = {}) {
     Object.keys(newValues).map(key => newValues[key] = "");
     setValues(newValues);
   };
+  const clearInput = (name) => {
+    setValues(values => ({...values, [name]: ""}));
+  };
 
   return {
     values,
     setValues,
     handleChange,
     resetForm,
-    clearForm
+    clearForm,
+    clearInput
   };
 };

@@ -14,37 +14,47 @@
   font-weight: bold;
 }
 .input {
+  width: 100%;
   margin: 10px 0;
   padding: 10px;
-  padding-right: 40px;
+  padding-right: 60px;
   border: 2px solid #9E9E9E;
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.1s ease-out;
 }
-.paste {
+.input__options {
   position: absolute;
   top: 50%;
   right: 0;
-  padding: 9px;
-  border-left: 2px solid #9E9E9E;
-  color: #9E9E9E;
-  cursor: pointer;
   transform: translate(100%, -50%);
   transition: all 0.1s ease-out;
 }
-.paste:hover {
-  color: #212121;
-}
-.paste:focus {
-  color: #212121;
+.input__options--active {
+  transform: translate(0%, -50%);
   transition: none;
 }
-.input:hover + .paste, .paste:hover, .paste:focus {
+.clear, .paste {
+  padding: 9px;
+  color: #9E9E9E;
+  cursor: pointer;
+  transition: all 0.1s ease-out;
+}
+.paste {
+  border-left: 2px solid #9E9E9E;
+}
+.clear:hover, .paste:hover {
+  color: #212121;
+}
+.clear:focus + .paste, .paste:focus {
   border-left: 2px solid #212121;
+}
+.clear:active, .paste:active {
+  transform: translateY(2%);
+}
+.input:hover + .input__options, .input__options:hover {
   transform: translate(0%, -50%);
 }
-.paste:active {
-  transition: all 0.1s ease-out;
-  transform: translate(0%, -48%);
+.input:hover + .input__options .paste {
+  border-left: 2px solid #212121;
 }

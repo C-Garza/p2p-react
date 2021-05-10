@@ -1,8 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import SubmitButton from "../SubmitButton/SubmitButton";
 import styles from "./RoomForm.module.css";
 
-const RoomForm = ({inputs, handleChange, handleSubmit}) => {
+const RoomForm = ({inputs, handleChange, handleSubmit, clearInput}) => {
+  const [isFocused, setFocused] = useState(false);
+  const [currentFocus, setCurrentFocus] = useState("");
+
   const handleClick = async (e, name) => {
     if("clipboard" in navigator) {
       const text = await navigator.clipboard.readText();
@@ -21,6 +24,17 @@ const RoomForm = ({inputs, handleChange, handleSubmit}) => {
     }
   };
 
+  const handleFocus = (e) => {
+    const id = e.target.id.split("__");
+    setFocused(!isFocused);
+    setCurrentFocus(id[0]);
+  }
+
+  const handleBlur = () => {
+    setFocused(!isFocused);
+    setCurrentFocus("");
+  }
+
   const renderInputs = inputs.map(input => {
     return (
       <React.Fragment key={input.name}>
@@ -36,9 +50,33 @@ const RoomForm = ({inputs, handleChange, handleSubmit}) => {
             value={input[input.name]}
             onChange={handleChange}
           />
-          <button id={`${input.id}__paste`} className={styles.paste} type="button" onClick={() => handleClick(input.id, input.name)}>
-            <i className={`fas fa-clipboard`}></i>
-          </button>
+          <div 
+            className={`
+              ${styles.input__options} 
+              ${isFocused && currentFocus === input.id ? styles["input__options--active"] : ""}
+            `}
+          >
+            <button 
+              id={`${input.id}__clear`}
+              type="button" 
+              className={styles.clear} 
+              onClick={() => clearInput(input.name)}
+              onFocus={handleFocus} 
+              onBlur={handleBlur}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+            <button 
+              id={`${input.id}__paste`} 
+              className={styles.paste} 
+              type="button" 
+              onClick={() => handleClick(input.id, input.name)}
+              onFocus={handleFocus} 
+              onBlur={handleBlur}
+            >
+              <i className={`fas fa-clipboard`}></i>
+            </button>
+          </div>
         </div>
       </React.Fragment>
     );
