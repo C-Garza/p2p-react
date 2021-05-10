@@ -155,6 +155,31 @@ const SocketContextProvider = ({children}) => {
       });
     };
 
+    const speechListeners = (stream, audioCtx, gainNode) => {
+      const options = {threshold: -55, audioContext: audioCtx};
+      const speechEvents = hark(stream, options, gainNode);
+  
+      speechEvents.on("speaking", () => {
+        setIsTalking(streams => ({...streams, [stream.id]: true}));
+      });
+  
+      speechEvents.on("stopped_speaking", () => {
+        setIsTalking(streams => ({...streams, [stream.id]: false}));
+      });
+  
+      return speechEvents;
+    };
+  
+    const setUpVolumeControl = (stream, isHost) => {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaStreamSource(stream);
+      const gainNode = audioCtx.createGain();
+      setGainStreams(streams => ({...streams, [stream.id]: {gainNode, isHost: isHost}}));
+      source.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      return speechListeners(stream, audioCtx, gainNode);
+    };
+
     // IF IN ROOM SET UP LISTENERS
     if(params) {
       initSocket();
@@ -168,7 +193,7 @@ const SocketContextProvider = ({children}) => {
         socket.close();
         streamRef.current.getAudioTracks()[0].stop();
         streamRef.current.getVideoTracks()[0].stop();
-        for(const [key, value] of Object.entries(videoRefs.current)) {
+        for(const value of Object.values(videoRefs.current)) {
           value.hark.stop();
         }
         peer.destroy();
@@ -203,31 +228,6 @@ const SocketContextProvider = ({children}) => {
         return;
       }
     }
-  };
-
-  const speechListeners = (stream, audioCtx, gainNode) => {
-    const options = {threshold: -55, audioContext: audioCtx};
-    const speechEvents = hark(stream, options, gainNode);
-
-    speechEvents.on("speaking", () => {
-      setIsTalking(streams => ({...streams, [stream.id]: true}));
-    });
-
-    speechEvents.on("stopped_speaking", () => {
-      setIsTalking(streams => ({...streams, [stream.id]: false}));
-    });
-
-    return speechEvents;
-  };
-
-  const setUpVolumeControl = (stream, isHost) => {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const source = audioCtx.createMediaStreamSource(stream);
-    const gainNode = audioCtx.createGain();
-    setGainStreams(streams => ({...streams, [stream.id]: {gainNode, isHost: isHost}}));
-    source.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    return speechListeners(stream, audioCtx, gainNode);
   };
 
   return (
