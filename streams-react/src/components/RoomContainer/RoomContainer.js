@@ -8,6 +8,7 @@ import styles from "./RoomContainer.module.css";
 
 const RoomContainer = () => {
   const {
+    isHost,
     setParams, 
     setDisplayName, 
     roomName: hostRoomName, 
@@ -17,7 +18,7 @@ const RoomContainer = () => {
     gainStreams
   } = useContext(SocketContext);
   const location = useLocation();
-  const [userName, setUserName] = useStateToLocalStorage("userName");
+  const [userName] = useStateToLocalStorage("userName");
   const [roomName, setRoomName] = useStateToLocalStorage("roomName");
 
   const searchParams = location.pathname.split("/");
@@ -38,8 +39,12 @@ const RoomContainer = () => {
 
   return(
     <div className={styles.container}>
-      <VideoRoomHeader room={roomName || hostRoomName} />
-      <VideoContainer videos={videoStreams} isTalking={isTalking} gainStreams={gainStreams} />
+      <VideoRoomHeader room={hostRoomName ? hostRoomName : roomName} setRoomName={setRoomName} isHost={isHost} />
+      <VideoContainer 
+        videos={videoStreams} 
+        isTalking={isTalking} 
+        gainStreams={gainStreams}
+      />
     </div>
   );
 };

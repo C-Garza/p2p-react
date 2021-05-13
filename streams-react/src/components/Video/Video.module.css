@@ -7,6 +7,8 @@
   border: 3px solid #1A659E;
   border-radius: 5px;
   color: white;
+  width: 600px;
+  flex: 1;
 }
 .speaking {
   border: 3px solid #C7EFCF;
@@ -22,6 +24,7 @@
 }
 .video {
   border-radius: 5px;
+  object-fit: contain;
 }
 .displayname {
   position: absolute;
@@ -30,6 +33,7 @@
   font-size: 1.2em;
   padding: 5px 10px;
   margin: 20px 0;
+  color: white;
   cursor: pointer;
   border: 1px solid black;
   border-radius: 5px;
@@ -45,6 +49,9 @@
   height: 100%;
   background-color: rgba(0,0,0,0.7);
   z-index: -1;
+}
+.displayName--disabled {
+  cursor: auto;
 }
 .controls {
   display: flex;

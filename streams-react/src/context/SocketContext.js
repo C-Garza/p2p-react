@@ -11,6 +11,7 @@ let peer = null;
 const SocketContextProvider = ({children}) => {
   const [params, setParams] = useState("");
   const [stream, setStream] = useState({});
+  const [isHost, setIsHost] = useState(false);
   const [videoStreams, setVideoStreams] = useState({});
   const [peers, setPeers] = useState({});
   const [users, setUsers] = useState({});
@@ -26,6 +27,21 @@ const SocketContextProvider = ({children}) => {
   const usersRefs = useRef(users);
   const displayNameRef = useRef(displayName);
   const roomNameRef = useRef(roomName);
+
+  useEffect(() => {
+    // RUNS WHEN USER CHANGES NAME
+    if(Object.keys(videoStreams).length && socket && displayName !== displayNameRef.current) {
+      const newVideos = Object.entries(videoStreams).find(video => video[1].displayName === displayNameRef.current);
+      changeDisplayName(newVideos[0], displayName);
+      socket.emit("change-username", peer.id, displayNameRef.current, displayName);
+    }
+  }, [displayName, videoStreams]);
+
+  useEffect(() => {
+    if(roomName !== roomNameRef.current && socket && isHost) {
+      socket.emit("change-roomname", roomName.current, roomName);
+    }
+  }, [roomName, isHost]);
 
   useEffect(() => {
     // SET REFS SO EVENT LISTENERS CAN ACCESS CURRENT STATE
@@ -46,7 +62,12 @@ const SocketContextProvider = ({children}) => {
         setUsers({...userList});
       });
       socket.on("room-name", room => {
+        console.log(room);
         setRoomName(room);
+      });
+      socket.on("is-host", (bool) => {
+        console.log("AM I HOST?: ", bool);
+        setIsHost(bool);
       });
       socket.on("error", (e) => {
         console.log(e);
@@ -104,6 +125,10 @@ const SocketContextProvider = ({children}) => {
           let {[userID]: tmp, ...rest} = peers;
           setPeers(rest);
         }
+      });
+      socket.on("username-changed", (id, oldID, newUser) => {
+        const peerStreamID = peersRefs.current[id].callStreamID.id;
+        changeDisplayName(peerStreamID, newUser);
       });
       socket.emit("stream-ready");
     };
@@ -191,6 +216,7 @@ const SocketContextProvider = ({children}) => {
         socket.removeAllListeners("user-connected");
         socket.removeAllListeners("user-disconnected");
         socket.close();
+        socket = null;
         streamRef.current.getAudioTracks()[0].stop();
         streamRef.current.getVideoTracks()[0].stop();
         for(const value of Object.values(videoRefs.current)) {
@@ -230,8 +256,14 @@ const SocketContextProvider = ({children}) => {
     }
   };
 
+  const changeDisplayName = (key, displayName) => {
+    setVideoStreams(videos => ({...videos, [key]: {...videos[key], displayName}}));
+  };
+
   return (
     <SocketContext.Provider value={{
+      stream,
+      isHost,
       videoStreams,
       displayNameRef,
       roomName,
