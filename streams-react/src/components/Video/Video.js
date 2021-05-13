@@ -9,7 +9,7 @@ import {nameInput} from "../../data/roomInputs";
 const Video = ({stream, displayName, isTalking, gainStreams}) => {
   const video = useRef(stream);
   const {setDisplayName, stream: myStream} = useContext(SocketContext);
-  const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 0, username: displayName});
+  const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 1, username: displayName});
   const [isMuted, setMuted] = useState(gainStreams?.isHost ? true : false);
   const [isVolumeFocused, setVolumeFocused] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
