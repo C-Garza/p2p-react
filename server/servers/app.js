@@ -6,7 +6,7 @@ const {v4: uuidV4} = require("uuid");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "streams-react/build")));
+app.use(express.static(path.join(__dirname, "..", "..", "streams-react/build")));
 
 app.use(cors());
 
@@ -17,7 +17,7 @@ app.get("/api/uuid", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname+"/streams-react/build/index.html"));
+  res.sendFile(path.join(__dirname+"..","..","/streams-react/build/index.html"));
 });
 
 module.exports = server;
