@@ -55,18 +55,16 @@ const SocketContextProvider = ({children}) => {
 
   useEffect(() => {
     const initSocket = () => {
-      socket = io("http://localhost:3001", {
+      socket = io(process.env.REACT_APP_SOCKET_HOST, {
         reconnection: true
       });
       socket.on("users-list", userList => {
         setUsers({...userList});
       });
       socket.on("room-name", room => {
-        console.log(room);
         setRoomName(room);
       });
       socket.on("is-host", (bool) => {
-        console.log("AM I HOST?: ", bool);
         setIsHost(bool);
       });
       socket.on("error", (e) => {
@@ -76,9 +74,11 @@ const SocketContextProvider = ({children}) => {
     
     const initPeer = () => {
       peer = new Peer({
-        host: "/",
-        port: "9000",
-        path: "/peerjs"
+        host: process.env.REACT_APP_PEERJS_HOST,
+        secure: process.env.REACT_APP_SECURE === "true",
+        port: process.env.REACT_APP_PEERJS_PORT,
+        path: process.env.REACT_APP_PEERJS_PATH,
+        key: "peerjs"
       });
       peer.on("open", id => {
         socket.emit("join-room", params, id, displayNameRef.current, roomNameRef.current);
