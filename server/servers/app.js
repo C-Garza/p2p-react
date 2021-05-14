@@ -17,7 +17,7 @@ app.get("/api/uuid", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname+"..","..","/streams-react/build/index.html"));
+  res.sendFile(path.join(__dirname, "..","..","/streams-react/build/index.html"));
 });
 
 module.exports = server;
