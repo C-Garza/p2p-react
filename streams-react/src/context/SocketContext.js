@@ -179,7 +179,17 @@ const SocketContextProvider = ({children}) => {
   
     const connectToNewUser = (userID, stream) => {
       // CALLING A USER
-      const call = peer.call(userID, stream);
+      const options = {
+        "constraints": {
+          "mandatory": {
+            "OfferToReceiveAudio": true,
+            "OfferToReceiveVideo": true
+          },
+          offerToReceiveAudio: 1,
+          offerToReceiveVideo: 1,
+        }
+      };
+      const call = peer.call(userID, stream, options);
   
       // WHEN USER IS CALLED
       call.on("stream", newUserStream => {
