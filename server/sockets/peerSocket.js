@@ -35,6 +35,9 @@ const peerSocketConnection = (server) => {
       // SEND USERS IN ROOM TO CLIENT
       io.to(roomID).emit("users-list", users);
 
+      // SEND USER CONFIRMATION LIST HAS ARRIVED
+      io.to(socket.id).emit("users-list-ready");
+
       // BROADCAST TO ROOM A NEW CLIENT HAS JOINED
       socket.on("stream-ready", () => {
         socket.broadcast.to(roomID).emit("user-connected", userID);

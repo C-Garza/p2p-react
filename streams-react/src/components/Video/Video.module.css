@@ -20,6 +20,7 @@
   align-items: center;
   position: relative;
   /* border: 5px solid transparent; */
+  min-height: 480px;
   overflow: hidden;
 }
 .video {

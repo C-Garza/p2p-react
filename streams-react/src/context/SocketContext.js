@@ -61,6 +61,9 @@ const SocketContextProvider = ({children}) => {
       socket.on("users-list", userList => {
         setUsers({...userList});
       });
+      socket.on("users-list-ready", () => {
+        getStream();
+      });
       socket.on("room-name", room => {
         setRoomName(room);
       });
@@ -82,7 +85,6 @@ const SocketContextProvider = ({children}) => {
       });
       peer.on("open", id => {
         socket.emit("join-room", params, id, displayNameRef.current, roomNameRef.current);
-        getStream();
       });
       peer.on("error", (e) => {
         console.log(e);
@@ -91,7 +93,7 @@ const SocketContextProvider = ({children}) => {
     };
 
     const getStream = () => {
-      navigator.mediaDevices.getUserMedia({video: true, audio: true})
+      navigator.mediaDevices.getUserMedia({video: {width: {min: 640}, height: {min: 480}}, audio: true})
         .then(currentStream => {
           // SET UP LISTENERS
           setUserConnection(currentStream);
@@ -110,11 +112,27 @@ const SocketContextProvider = ({children}) => {
           }));
         }).catch(e => {
           console.log(e);
+          const currentStream = fakeAudio();
+
+          // SET UP LISTENERS
+          setUserConnection(currentStream);
+          setPeerListeners(currentStream);
+          const harkListeners = setUpVolumeControl(currentStream, true);
+
+          // SET USER STREAM
+          setStream(currentStream);
+          setVideoStreams(videoStreams => ({
+            ...videoStreams, 
+            [currentStream.id]: {
+              streamID: currentStream,
+              displayName: usersRefs.current[peer.id].displayName,
+              hark: harkListeners
+            }
+          }));
       });
     };
     const setUserConnection = (stream) => {
       socket.on("user-connected", userID => {
-        console.log("HAS JOINED!: " + userID);
         connectToNewUser(userID, stream);
       });
       socket.on("user-disconnected", (userID) => {
@@ -217,8 +235,12 @@ const SocketContextProvider = ({children}) => {
         socket.removeAllListeners("user-disconnected");
         socket.close();
         socket = null;
-        streamRef.current.getAudioTracks()[0].stop();
-        streamRef.current.getVideoTracks()[0].stop();
+        if(streamRef.current.getAudioTracks().length) {
+          streamRef.current.getAudioTracks()[0].stop();
+        }
+        if(streamRef.current.getVideoTracks().length) {
+          streamRef.current.getVideoTracks()[0].stop();
+        }
         for(const value of Object.values(videoRefs.current)) {
           value.hark.stop();
         }
@@ -259,6 +281,14 @@ const SocketContextProvider = ({children}) => {
   const changeDisplayName = (key, displayName) => {
     setVideoStreams(videos => ({...videos, [key]: {...videos[key], displayName}}));
   };
+
+  const fakeAudio = () => {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const fakeAudio = audioCtx.createMediaStreamDestination();
+    const currentStream = new MediaStream(fakeAudio.stream);
+
+    return currentStream;
+  }
 
   return (
     <SocketContext.Provider value={{
