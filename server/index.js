@@ -9,6 +9,8 @@ server.listen(process.env.PORT, () => {
   console.log(`Server is listening on ${process.env.PORT}`);
 });
 
-peerApp.listen(9000, () => {
-  console.log(`Server is listening on 9000`);
-});
+if(process.env.NODE_ENV === "development") {
+  peerApp.listen(9000, () => {
+    console.log(`Server is listening on 9000`);
+  });
+}

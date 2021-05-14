@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "set NODE_ENV=development&& nodemon index.js",
+    "start": "node index.js",
+    "heroku-postbuild": "cd streams-react && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
