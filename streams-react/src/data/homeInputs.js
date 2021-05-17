@@ -5,7 +5,9 @@ const createInputs = [
     name: "username",
     required: true,
     username: "",
-    id: "username-1"
+    id: "username-1",
+    max: "32",
+    autoComplete: "on"
   },
   {
     type: "text",
@@ -13,7 +15,8 @@ const createInputs = [
     name: "room",
     required: true,
     room: "",
-    id: "room-1"
+    id: "room-1",
+    autoComplete: "on"
   }
 ];
 
@@ -24,7 +27,9 @@ const joinInputs = [
     name: "username",
     required: true,
     username: "",
-    id: "username-2"
+    id: "username-2",
+    max: "32",
+    autoComplete: "on"
   },
   {
     type: "text",
@@ -32,7 +37,8 @@ const joinInputs = [
     name: "room",
     required: true,
     room: "",
-    id: "room-2"
+    id: "room-2",
+    autoComplete: "off"
   }
 ];
 

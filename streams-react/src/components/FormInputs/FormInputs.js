@@ -48,6 +48,8 @@ const FormInputs = ({inputs, handleChange, clearInput}) => {
             required={input.required}
             value={input[input.name]}
             onChange={handleChange}
+            maxLength={input.max}
+            autoComplete={input.autoComplete}
           />
           <div 
             className={`

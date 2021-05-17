@@ -82,42 +82,44 @@ const Video = ({stream, displayName, isTalking, gainStreams}) => {
     <div className={`${styles.container} ${isTalking ? styles.speaking : styles.silent}`}>
       <div className={styles.wrapper}>
         <video id={video.current.id} className={styles.video} playsInline ref={video} autoPlay muted></video>
-        <EditWrapper 
-          inputs={formInputs} 
-          handleChange={handleChange} 
-          clearInput={clearInput}
-          handleSubmit={handleSubmit}
-          handleClick={handleNameClick}
-          isEditing={isEditing}
-          hidden={true}
-          formStyles={"formDisplayName"}
-        >
-          <button 
-            type="button" 
-            className={`${styles.displayname} ${isMyStream ? "" : styles["displayName--disabled"]}`} 
-            onClick={handleNameClick}
-            disabled={!isMyStream}
+        <div className={styles.video__tray}>
+          <EditWrapper 
+            inputs={formInputs} 
+            handleChange={handleChange} 
+            clearInput={clearInput}
+            handleSubmit={handleSubmit}
+            handleClick={handleNameClick}
+            isEditing={isEditing}
+            hidden={true}
+            formStyles={isEditing ? "formDisplayName--active" : "formDisplayName"}
           >
-            {displayName || "Silly Goose"}
-          </button>
-        </EditWrapper>
-        <div className={`${styles.controls} ${isVolumeFocused ? styles[`controls--focus`]: ""}`}>
-          <button type="button" className={styles.volume__button} onClick={handleClick}>
-            <i className={`fas ${!isMuted ? `fa-volume-up`: `fa-volume-mute`} ${styles.volume}`}></i>
-          </button>
-          <input 
-            className={styles.slider}
-            type="range" 
-            min="-0.01"
-            max="2" 
-            step="0.01" 
-            name="volume"
-            value={values.volume} 
-            title={volumeTitle}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleFocus}
-          />
+            <button 
+              type="button" 
+              className={`${styles.displayname} ${isMyStream ? "" : styles["displayName--disabled"]}`} 
+              onClick={handleNameClick}
+              disabled={!isMyStream}
+            >
+              {displayName || "Silly Goose"}
+            </button>
+          </EditWrapper>
+          <div className={`${styles.controls} ${isVolumeFocused ? styles[`controls--focus`]: ""}`}>
+            <button type="button" className={styles.volume__button} onClick={handleClick}>
+              <i className={`fas ${!isMuted ? `fa-volume-up`: `fa-volume-mute`} ${styles.volume}`}></i>
+            </button>
+            <input 
+              className={styles.slider}
+              type="range" 
+              min="-0.01"
+              max="2" 
+              step="0.01" 
+              name="volume"
+              value={values.volume} 
+              title={volumeTitle}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onBlur={handleFocus}
+            />
+          </div>
         </div>
       </div>
     </div>
