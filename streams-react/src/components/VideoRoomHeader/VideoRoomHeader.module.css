@@ -12,6 +12,7 @@
   align-items: center;
   position: relative;
   margin-bottom: 15px;
+  max-width: 85%;
 }
 .header__container--active {
   padding-right: 20px;
@@ -19,8 +20,22 @@
   margin-bottom: 10px;
 }
 .heading {
+  position: relative;
   padding-left: 20px;
   padding-right: 20px;
   margin-bottom: 0;
-  text-decoration: underline;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.heading:before {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 3px;
+  width: 75%;
+  background-color: white;
+  transform: translateX(-50%);
 }

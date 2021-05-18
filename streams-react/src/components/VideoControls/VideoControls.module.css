@@ -1,0 +1,118 @@
+.video__tray {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.displayname {
+  position: relative;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  font-size: 1.2em;
+  padding: 5px 10px;
+  margin: 20px 0;
+  color: white;
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 5px;
+  z-index: 1;
+}
+.displayname:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  z-index: -1;
+}
+.displayName--disabled {
+  cursor: auto;
+}
+.controls__tray {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
+  width: 50%;
+  padding-right: 40px;
+  transform: translateY(200%);
+  min-height: calc(1.2rem + 7px);
+  transition: all 0.35s;
+}
+video[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
+  transform: translateY(0);
+}
+.video__tray:hover .controls__tray {
+  transform: translateY(0);
+}
+.control__button {
+  min-width: 30px;
+  padding: 2px;
+  font-size: 1.2rem;
+  color: #EEEEEE;
+  cursor: pointer;
+}
+.control__button:hover {
+  color: white;
+}
+.control__button:focus {
+  color: white;
+}
+.controls__tray--active {
+  transform: translateY(0);
+  transition: none;
+}
+.video__button {
+
+}
+.mic__button {
+
+}
+.volume__controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  min-width: 45px;
+  bottom: -25px;
+  right: 0;
+  margin: 20px 0;
+  padding: 6px 0px;
+  padding-top: 2px;
+  font-size: 1.2rem;
+  overflow: hidden;
+  transition: all 0.18s ease;
+}
+.volume__controls:hover {
+  padding-top: 150px;
+}
+.volume__controls--focus {
+  padding-top: 150px;
+}
+.slider {
+  position: absolute;
+  transform: rotate(-90deg) translateX(65%);
+  transition: all 0.35s;
+}
+.volume__button {
+  color: #EEEEEE;
+  cursor: pointer;
+}
+.volume__controls:hover .volume__button {
+  color: white;
+}
+.volume__button:focus {
+  color: white;
+}
+.volume {
+  font-size: 1.2em;
+}
+.hidden {
+  display: none;
+}
