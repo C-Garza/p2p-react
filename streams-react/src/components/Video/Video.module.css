@@ -13,6 +13,9 @@
 .speaking {
   border: 3px solid #C7EFCF;
 }
+.muted {
+  border: 3px solid #DA3E52;
+}
 .wrapper {
   display: flex;
   flex-direction: column;

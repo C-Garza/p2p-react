@@ -1,9 +1,10 @@
-import {useEffect, useRef} from "react";
+import {useState, useEffect, useRef} from "react";
 import styles from "./Video.module.css";
 import VideoControls from "../VideoControls/VideoControls";
 
 const Video = ({stream, displayName, isTalking, gainStreams}) => {
   const video = useRef(stream);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     if(video.current) {
@@ -11,8 +12,12 @@ const Video = ({stream, displayName, isTalking, gainStreams}) => {
     }
   }, [video, stream]);
 
+  const handleMuted = () => {
+    setIsMuted(!isMuted);
+  }; 
+
   return (
-    <div className={`${styles.container} ${isTalking ? styles.speaking : styles.silent}`}>
+    <div className={`${styles.container} ${isMuted ? styles.muted : ""} ${isTalking ? styles.speaking : styles.silent}`}>
       <div className={styles.wrapper}>
         <video 
           id={video.current.id} 
@@ -28,6 +33,7 @@ const Video = ({stream, displayName, isTalking, gainStreams}) => {
           stream={stream} 
           displayName={displayName} 
           gainStreams={gainStreams} 
+          handleMuted={handleMuted}
         />
       </div>
     </div>

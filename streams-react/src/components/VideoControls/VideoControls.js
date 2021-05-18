@@ -6,7 +6,7 @@ import { SocketContext } from "../../context/SocketContext";
 import styles from "./VideoControls.module.css";
 import {nameInput} from "../../data/roomInputs";
 
-const VideoControls = ({stream, displayName, gainStreams}) => {
+const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
   const {setDisplayName, stream: myStream} = useContext(SocketContext);
   const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 1, username: displayName});
   const [isMuted, setMuted] = useState(gainStreams?.isHost ? true : false);
@@ -32,9 +32,11 @@ const VideoControls = ({stream, displayName, gainStreams}) => {
   useEffect(() => {
     if(values.volume > 0 && isMuted) {
       setMuted(false);
+      handleMuted();
     }
     if(values.volume <= 0 && !isMuted) {
       setMuted(true);
+      handleMuted();
     }
   }, [values.volume, isMuted]);
 
@@ -48,6 +50,7 @@ const VideoControls = ({stream, displayName, gainStreams}) => {
       stream.getAudioTracks()[0].enabled = true;
       setPlayMic(true);
     }
+    handleMuted();
   };
 
   const handleVideoClick = () => {
