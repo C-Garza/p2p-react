@@ -56,12 +56,15 @@ video[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
   font-size: 1.2rem;
   color: #EEEEEE;
   cursor: pointer;
+  transition: all 0.08s ease;
 }
 .control__button:hover {
   color: white;
+  transform: scale(1.1);
 }
 .control__button:focus {
   color: white;
+  transform: scale(1.1);
 }
 .controls__tray--active {
   transform: translateY(0);
@@ -103,12 +106,15 @@ video[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
 .volume__button {
   color: #EEEEEE;
   cursor: pointer;
+  transition: all 0.08s ease;
 }
 .volume__controls:hover .volume__button {
   color: white;
+  transform: scale(1.1);
 }
 .volume__button:focus {
   color: white;
+  transform: scale(1.1);
 }
 .volume {
   font-size: 1.2em;
