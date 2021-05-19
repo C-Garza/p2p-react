@@ -15,7 +15,9 @@ const RoomContainer = () => {
     setRoomName: setHostRoomName, 
     videoStreams, 
     isTalking, 
-    gainStreams
+    gainStreams,
+    hasPeerError,
+    hasSocketError
   } = useContext(SocketContext);
   const location = useLocation();
   const [userName] = useStateToLocalStorage("userName");
@@ -44,6 +46,8 @@ const RoomContainer = () => {
         videos={videoStreams} 
         isTalking={isTalking} 
         gainStreams={gainStreams}
+        hasPeerError={hasPeerError}
+        hasSocketError={hasSocketError}
       />
     </div>
   );

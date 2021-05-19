@@ -19,6 +19,8 @@ const SocketContextProvider = ({children}) => {
   const [roomName, setRoomName] = useState("");
   const [isTalking, setIsTalking] = useState({});
   const [gainStreams, setGainStreams] = useState({});
+  const [hasPeerError, setPeerError] = useState(false);
+  const [hasSocketError, setSocketError] = useState(false);
 
   // TO DO: Find another solution for all these refs
   const streamRef = useRef(stream);
@@ -70,8 +72,16 @@ const SocketContextProvider = ({children}) => {
       socket.on("is-host", (bool) => {
         setIsHost(bool);
       });
+      socket.on("connect", e => {
+        setSocketError(false);
+      });
+      socket.on("connect_error", e => {
+        console.log(e);
+        setSocketError(e);
+      });
       socket.on("error", (e) => {
         console.log(e);
+        setSocketError(e);
       });
     };
     
@@ -84,10 +94,12 @@ const SocketContextProvider = ({children}) => {
         key: "peerjs"
       });
       peer.on("open", id => {
+        setPeerError(false);
         socket.emit("join-room", params, id, displayNameRef.current, roomNameRef.current);
       });
       peer.on("error", (e) => {
         console.log(e);
+        setPeerError(e);
         if(peer.disconnected) peer.reconnect();
       });
     };
@@ -245,11 +257,13 @@ const SocketContextProvider = ({children}) => {
         socket.removeAllListeners("user-disconnected");
         socket.close();
         socket = null;
-        if(streamRef.current.getAudioTracks().length) {
-          streamRef.current.getAudioTracks()[0].stop();
-        }
-        if(streamRef.current.getVideoTracks().length) {
-          streamRef.current.getVideoTracks()[0].stop();
+        if(streamRef.current.id) {
+          if(streamRef.current.getAudioTracks().length) {
+            streamRef.current.getAudioTracks()[0].stop();
+          }
+          if(streamRef.current.getVideoTracks().length) {
+            streamRef.current.getVideoTracks()[0].stop();
+          }
         }
         for(const value of Object.values(videoRefs.current)) {
           value.hark.stop();
@@ -258,6 +272,8 @@ const SocketContextProvider = ({children}) => {
         setVideoStreams({});
         setPeers({});
         setIsTalking({});
+        setPeerError(false);
+        setSocketError(false);
       }
     };
   }, [params]);
@@ -309,6 +325,8 @@ const SocketContextProvider = ({children}) => {
       roomName,
       isTalking,
       gainStreams,
+      hasPeerError,
+      hasSocketError,
       setDisplayName,
       setRoomName,
       setParams

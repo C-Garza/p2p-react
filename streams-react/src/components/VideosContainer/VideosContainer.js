@@ -1,7 +1,10 @@
+import ErrorDisplay from "../ErrorDisplay/ErrorDisplay";
+import Loading from "../Loading/Loading";
 import Video from "../Video/Video";
 import styles from "./VideosContainer.module.css";
 
-const VideoContainer = ({videos, isTalking, gainStreams}) => {
+const VideoContainer = ({videos, isTalking, gainStreams, hasPeerError, hasSocketError}) => {
+  console.log(videos);
   const renderVideo = () => {
     return Object.values(videos).map((video, i) => {
       return (
@@ -15,6 +18,28 @@ const VideoContainer = ({videos, isTalking, gainStreams}) => {
       );
     });
   };
+
+  if(hasSocketError) {
+    return(
+      <div className={styles.error}>
+        <ErrorDisplay error={hasSocketError} />
+      </div>
+    );
+  }
+
+  if(hasPeerError) {
+    return(
+      <ErrorDisplay error={hasPeerError} />
+    );
+  }
+
+  if(!Object.keys(videos).length) {
+    return(
+      <div className={styles.loading}>
+        <Loading />
+      </div>
+    );
+  }
 
   return(
     <div className={styles.videos}>

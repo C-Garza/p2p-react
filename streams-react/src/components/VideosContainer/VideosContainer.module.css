@@ -10,3 +10,9 @@
   align-items: center;
   flex-wrap: wrap;
 }
+.error {
+  color: white;
+}
+.loading {
+  color: white;
+}
