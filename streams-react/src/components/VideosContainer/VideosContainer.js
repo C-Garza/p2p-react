@@ -29,7 +29,9 @@ const VideoContainer = ({videos, isTalking, gainStreams, hasPeerError, hasSocket
 
   if(hasPeerError) {
     return(
-      <ErrorDisplay error={hasPeerError} />
+      <div className={styles.error}>
+        <ErrorDisplay error={hasPeerError} />
+      </div>
     );
   }
 
