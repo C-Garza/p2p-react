@@ -18,6 +18,9 @@ const VideoRoomHeader = ({room, setRoomName, isHost}) => {
   });
 
   const handleClick = () => {
+    if(!values.room.length && !isEditing) {
+      setIsEditing(true);
+    }
     if(values.room.length) {
       if(lastRoomName !== values.room) {
         setRoomName(values.room);

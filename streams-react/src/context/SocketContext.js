@@ -11,6 +11,7 @@ let peer = null;
 const SocketContextProvider = ({children}) => {
   const [params, setParams] = useState("");
   const [stream, setStream] = useState({});
+  const [hasWebcam, setHasWebcam] = useState(false);
   const [isHost, setIsHost] = useState(false);
   const [videoStreams, setVideoStreams] = useState({});
   const [peers, setPeers] = useState({});
@@ -23,7 +24,6 @@ const SocketContextProvider = ({children}) => {
   const [hasSocketError, setSocketError] = useState(false);
 
   // TO DO: Find another solution for all these refs
-  const streamRef = useRef(stream);
   const videoRefs = useRef(videoStreams);
   const peersRefs = useRef(peers);
   const usersRefs = useRef(users);
@@ -41,29 +41,34 @@ const SocketContextProvider = ({children}) => {
 
   useEffect(() => {
     if(roomName !== roomNameRef.current && socket && isHost) {
-      socket.emit("change-roomname", roomName.current, roomName);
+      socket.emit("change-roomname", roomNameRef.current, roomName);
     }
   }, [roomName, isHost]);
 
   useEffect(() => {
+    if(socket && stream.id) {
+      changeWebcamStatus(stream.id, hasWebcam);
+      if(Object.keys(peers).length) {
+        socket.emit("change-webcam-status", peer.id, stream.id, hasWebcam);
+      }
+    }
+  }, [hasWebcam, stream.id, peers]);
+
+  useEffect(() => {
     // SET REFS SO EVENT LISTENERS CAN ACCESS CURRENT STATE
-    streamRef.current = stream;
     videoRefs.current = videoStreams;
     peersRefs.current = peers;
     usersRefs.current = users;
     displayNameRef.current = displayName;
     roomNameRef.current = roomName;
-  }, [stream, videoStreams, peers, users, displayName, roomName]);
+  }, [videoStreams, peers, users, displayName, roomName]);
 
   useEffect(() => {
     const initSocket = () => {
       socket = io(process.env.REACT_APP_SOCKET_HOST, {
         reconnection: true
       });
-      socket.on("users-list", userList => {
-        setUsers({...userList});
-      });
-      socket.on("users-list-ready", () => {
+      socket.on("peer-server-connected", () => {
         getStream();
       });
       socket.on("room-name", room => {
@@ -100,7 +105,7 @@ const SocketContextProvider = ({children}) => {
       peer.on("error", (e) => {
         console.log(e);
         setPeerError(e);
-        if(peer.disconnected) peer.reconnect();
+        if(peer.disconnected && !peer.destroyed) peer.reconnect();
       });
     };
 
@@ -108,7 +113,7 @@ const SocketContextProvider = ({children}) => {
       navigator.mediaDevices.getUserMedia({video: {width: {min: 640}, height: {min: 480}}, audio: true})
         .then(currentStream => {
           // SET UP LISTENERS
-          setUserConnection(currentStream);
+          setUserConnection(currentStream, true);
           setPeerListeners(currentStream);
           const harkListeners = setUpVolumeControl(currentStream, true);
 
@@ -118,16 +123,18 @@ const SocketContextProvider = ({children}) => {
             ...videoStreams, 
             [currentStream.id]: {
               streamID: currentStream,
-              displayName: usersRefs.current[peer.id].displayName,
-              hark: harkListeners
+              displayName: displayNameRef.current,
+              hark: harkListeners,
+              hasWebcam: true
             }
           }));
+          setHasWebcam(true);
         }).catch(e => {
           console.log(e);
           const currentStream = fakeAudio();
 
           // SET UP LISTENERS
-          setUserConnection(currentStream);
+          setUserConnection(currentStream, false);
           setPeerListeners(currentStream);
           const harkListeners = setUpVolumeControl(currentStream, true);
 
@@ -137,13 +144,15 @@ const SocketContextProvider = ({children}) => {
             ...videoStreams, 
             [currentStream.id]: {
               streamID: currentStream,
-              displayName: usersRefs.current[peer.id].displayName,
-              hark: harkListeners
+              displayName: displayNameRef.current,
+              hark: harkListeners,
+              hasWebcam: false
             }
           }));
+          setHasWebcam(false);
       });
     };
-    const setUserConnection = (stream) => {
+    const setUserConnection = (stream, hasWebcam) => {
       socket.on("user-connected", userID => {
         connectToNewUser(userID, stream);
       });
@@ -156,10 +165,20 @@ const SocketContextProvider = ({children}) => {
           setPeers(rest);
         }
       });
+      socket.on("users-list", userList => {
+        setUsers({...userList});
+      });
       socket.on("username-changed", (id, oldID, newUser) => {
         const peerStreamID = peersRefs.current[id].callStreamID.id;
         changeDisplayName(peerStreamID, newUser);
       });
+      socket.on("webcam-status-changed", (id, newUsers, streamID, hasWebcam) => {
+        setUsers({...newUsers});
+        if(videoRefs.current[streamID]) {
+          changeWebcamStatus(streamID, hasWebcam);
+        }
+      });
+      socket.emit("get-users-list", hasWebcam);
       socket.emit("stream-ready");
     };
 
@@ -231,6 +250,13 @@ const SocketContextProvider = ({children}) => {
       speechEvents.on("stopped_speaking", () => {
         setIsTalking(streams => ({...streams, [stream.id]: false}));
       });
+
+      // TEMP FIX FOR AudioContext NEEDING USER GESTURE TO START
+      // TO-DO: Create a state to show if AudioContext is suspended
+      // and show text to click/press any key to hear sound
+      speechEvents.on("volume_change", () => {
+        if(audioCtx.state === "suspended") audioCtx.resume();
+      });
   
       return speechEvents;
     };
@@ -253,22 +279,24 @@ const SocketContextProvider = ({children}) => {
 
     return () => {
       if(socket && params) {
-        socket.removeAllListeners("user-connected");
-        socket.removeAllListeners("user-disconnected");
+        socket.removeAllListeners();
         socket.close();
         socket = null;
-        if(streamRef.current.id) {
-          if(streamRef.current.getAudioTracks().length) {
-            streamRef.current.getAudioTracks()[0].stop();
+
+        setStream(prevStream => {
+          if(prevStream.id) {
+            prevStream.getTracks().forEach(track => {
+              track.stop();
+            });
           }
-          if(streamRef.current.getVideoTracks().length) {
-            streamRef.current.getVideoTracks()[0].stop();
-          }
-        }
+          return {};
+        });
         for(const value of Object.values(videoRefs.current)) {
           value.hark.stop();
         }
+
         peer.destroy();
+        setHasWebcam(false);
         setVideoStreams({});
         setPeers({});
         setIsTalking({});
@@ -284,7 +312,8 @@ const SocketContextProvider = ({children}) => {
       [stream.id]: {
         streamID: stream,
         displayName: usersRefs.current[id].displayName,
-        hark: harkListeners
+        hark: harkListeners,
+        hasWebcam: usersRefs.current[id].hasWebcam
       }
     }));
     setPeers(peers => ({...peers, [id]: {call, callStreamID}}));
@@ -308,6 +337,10 @@ const SocketContextProvider = ({children}) => {
     setVideoStreams(videos => ({...videos, [key]: {...videos[key], displayName}}));
   };
 
+  const changeWebcamStatus = (key, hasWebcam) => {
+    setVideoStreams(videos => ({...videos, [key]: {...videos[key], hasWebcam}}));
+  };
+
   const fakeAudio = () => {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const fakeAudio = audioCtx.createMediaStreamDestination();
@@ -321,12 +354,12 @@ const SocketContextProvider = ({children}) => {
       stream,
       isHost,
       videoStreams,
-      displayNameRef,
       roomName,
       isTalking,
       gainStreams,
       hasPeerError,
       hasSocketError,
+      setHasWebcam,
       setDisplayName,
       setRoomName,
       setParams

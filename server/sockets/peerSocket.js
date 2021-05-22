@@ -1,5 +1,5 @@
 const socketio = require("socket.io");
-const {addUser, setUserHost, changeUserName, removeUser, getUsersInRoom} = require("../utils/users");
+const {addUser, setUserHost, changeUserName, changeWebcamStatus, removeUser, getUsersInRoom} = require("../utils/users");
 const {addRoom, updateRoom, getRoom, removeRoom} = require("../utils/rooms");
 
 const peerSocketConnection = (server) => {
@@ -24,19 +24,23 @@ const peerSocketConnection = (server) => {
       console.log(roomID, userID, displayName, roomName);
       socket.join(roomID);
       
-      addUser(userID, socket.id, displayName, roomID);
+      addUser(userID, socket.id, displayName, roomID, false);
       if(roomName.length) addRoom(roomID, roomName);
 
       const users = getUsersInRoom(roomID);
       const room = getRoom(roomID);
 
       setUserHost(userID, roomID);
-      
-      // SEND USERS IN ROOM TO CLIENT
-      io.to(roomID).emit("users-list", users);
 
-      // SEND USER CONFIRMATION LIST HAS ARRIVED
-      io.to(socket.id).emit("users-list-ready");
+      socket.emit("peer-server-connected");
+
+      // SEND USERS IN ROOM TO CLIENT
+      socket.on("get-users-list", (hasWebcam) => {
+        changeWebcamStatus(userID, hasWebcam);
+        const users = getUsersInRoom(roomID);
+
+        io.to(roomID).emit("users-list", users);
+      });
 
       // BROADCAST TO ROOM A NEW CLIENT HAS JOINED
       socket.on("stream-ready", () => {
@@ -58,6 +62,12 @@ const peerSocketConnection = (server) => {
       socket.on("change-roomname", (currentID, newID) => {
         updateRoom(roomID, newID);
         socket.broadcast.to(roomID).emit("room-name", newID);
+      });
+
+      socket.on("change-webcam-status", (id, streamID, hasWebcam) => {
+        changeWebcamStatus(id, hasWebcam);
+        const newUsers = getUsersInRoom(roomID);
+        socket.broadcast.to(roomID).emit("webcam-status-changed", id, newUsers, streamID, hasWebcam);
       });
   
       socket.on("disconnect", () => {

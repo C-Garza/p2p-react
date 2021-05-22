@@ -4,7 +4,6 @@ import Video from "../Video/Video";
 import styles from "./VideosContainer.module.css";
 
 const VideoContainer = ({videos, isTalking, gainStreams, hasPeerError, hasSocketError}) => {
-  console.log(videos);
   const renderVideo = () => {
     return Object.values(videos).map((video, i) => {
       return (
@@ -14,6 +13,7 @@ const VideoContainer = ({videos, isTalking, gainStreams, hasPeerError, hasSocket
           displayName={video.displayName} 
           isTalking={isTalking?.[video.streamID.id]}
           gainStreams={gainStreams?.[video.streamID.id]}
+          hasWebcam={video.hasWebcam}
         />
       );
     });

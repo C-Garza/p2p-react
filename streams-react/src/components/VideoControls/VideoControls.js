@@ -7,7 +7,7 @@ import styles from "./VideoControls.module.css";
 import {nameInput} from "../../data/roomInputs";
 
 const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
-  const {setDisplayName, stream: myStream} = useContext(SocketContext);
+  const {setDisplayName, stream: myStream, setHasWebcam} = useContext(SocketContext);
   const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 1, username: displayName});
   const [isMuted, setMuted] = useState(gainStreams?.isHost ? true : false);
   const [isVolumeFocused, setVolumeFocused] = useState(false);
@@ -38,7 +38,7 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
       setMuted(true);
       handleMuted();
     }
-  }, [values.volume, isMuted]);
+  }, [values.volume, isMuted, handleMuted]);
 
   const handleMicClick = () => {
     if(!stream.getAudioTracks().length) return;
@@ -58,10 +58,12 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
     if(playVideo) {
       stream.getVideoTracks()[0].enabled = false;
       setPlayVideo(false);
+      setHasWebcam(false);
     }
     else {
       stream.getVideoTracks()[0].enabled = true;
       setPlayVideo(true);
+      setHasWebcam(true);
     }
   };
 
@@ -75,6 +77,9 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
   };
 
   const handleNameClick = () => {
+    if(!values.username.length && !isEditing) {
+      setIsEditing(true);
+    }
     if(values.username.length) {
       if(lastName !== values.username) {
         setUserName(values.username);

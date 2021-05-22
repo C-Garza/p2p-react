@@ -24,9 +24,17 @@
   position: relative;
   /* border: 5px solid transparent; */
   min-height: 480px;
+  width: 100%;
   overflow: hidden;
 }
 .video {
   border-radius: 5px;
   object-fit: contain;
+}
+.identicon__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 480px;
+  width: 100%;
 }

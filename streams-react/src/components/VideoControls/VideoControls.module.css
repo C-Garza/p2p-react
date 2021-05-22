@@ -3,7 +3,8 @@
   align-items: center;
   position: absolute;
   bottom: 0;
-  width: 100%;
+  /* width: 100%; */
+  width: 80%;
 }
 .displayname {
   position: relative;
@@ -45,6 +46,9 @@
   transition: all 0.35s;
 }
 video[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
+  transform: translateY(0);
+}
+div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
   transform: translateY(0);
 }
 .video__tray:hover .controls__tray {
