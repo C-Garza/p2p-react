@@ -2,11 +2,12 @@ let users = {};
 // peerID: {
 //  id,
 //  displayName,
-//  roomID 
+//  roomID ,
+//  hasWebcam
 // }
 
-const addUser = (id, socketID, displayName, roomID) => {
-  users[id] = {id: socketID, displayName, roomID, isHost: false};
+const addUser = (id, socketID, displayName, roomID, hasWebcam) => {
+  users[id] = {id: socketID, displayName, roomID, isHost: false, hasWebcam};
 };
 
 const hasHost = (roomID) => {
@@ -38,6 +39,10 @@ const changeUserName = (id, currentID, newID) => {
   return users[id];
 };
 
+const changeWebcamStatus = (id, hasWebcam) => {
+  users[id] = {...users[id], hasWebcam};
+};
+
 const removeUser = (id) => {
   users = Object.fromEntries(Object.entries(users).filter(([key, user]) => id !== user.id));
 };
@@ -52,6 +57,7 @@ module.exports = {
   addUser,
   setUserHost,
   changeUserName,
+  changeWebcamStatus,
   removeUser,
   getUsersInRoom
 };
