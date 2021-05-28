@@ -12,6 +12,7 @@ const SocketContextProvider = ({children}) => {
   const [params, setParams] = useState("");
   const [stream, setStream] = useState({});
   const [hasWebcam, setHasWebcam] = useState(false);
+  const [shareScreen, setShareScreen] = useState(false);
   const [isHost, setIsHost] = useState(false);
   const [videoStreams, setVideoStreams] = useState({});
   const [peers, setPeers] = useState({});
@@ -29,6 +30,7 @@ const SocketContextProvider = ({children}) => {
   const usersRefs = useRef(users);
   const displayNameRef = useRef(displayName);
   const roomNameRef = useRef(roomName);
+  const shareScreenRef = useRef(shareScreen);
 
   useEffect(() => {
     // RUNS WHEN USER CHANGES NAME
@@ -40,12 +42,14 @@ const SocketContextProvider = ({children}) => {
   }, [displayName, videoStreams]);
 
   useEffect(() => {
+    // HANDLES ROOM NAME CHANGE
     if(roomName !== roomNameRef.current && socket && isHost) {
       socket.emit("change-roomname", roomNameRef.current, roomName);
     }
   }, [roomName, isHost]);
 
   useEffect(() => {
+    // HANDLES WEBCAM CHANGE
     if(socket && stream.id) {
       changeWebcamStatus(stream.id, hasWebcam);
       if(Object.keys(peers).length) {
@@ -55,13 +59,43 @@ const SocketContextProvider = ({children}) => {
   }, [hasWebcam, stream.id, peers]);
 
   useEffect(() => {
+    // HANDLES SCREEN SHARING
+    if(socket && stream.id && shareScreen !== shareScreenRef.current) {
+      if(shareScreen) {
+        navigator.mediaDevices.getDisplayMedia()
+          .then(currentStream => {
+            replaceVideoStream(stream, currentStream, peer);
+            setHasWebcam(true);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+      else {
+        navigator.mediaDevices.getUserMedia({video: {width: {min: 640}, height: {min: 480}}})
+        .then(currentStream => {
+          replaceVideoStream(stream, currentStream, peer);
+          setHasWebcam(true);
+        })
+        .catch(e => {
+          const video = fakeVideo();
+          replaceVideoStream(stream, video, peer, true);
+          setHasWebcam(false);
+          console.log(e);
+        });
+      }
+    }
+  }, [shareScreen, stream]);
+
+  useEffect(() => {
     // SET REFS SO EVENT LISTENERS CAN ACCESS CURRENT STATE
     videoRefs.current = videoStreams;
     peersRefs.current = peers;
     usersRefs.current = users;
     displayNameRef.current = displayName;
     roomNameRef.current = roomName;
-  }, [videoStreams, peers, users, displayName, roomName]);
+    shareScreenRef.current = shareScreen;
+  }, [videoStreams, peers, users, displayName, roomName, shareScreen]);
 
   useEffect(() => {
     const initSocket = () => {
@@ -132,6 +166,8 @@ const SocketContextProvider = ({children}) => {
         }).catch(e => {
           console.log(e);
           const currentStream = fakeAudio();
+          const video = fakeVideo();
+          currentStream.addTrack(video);
 
           // SET UP LISTENERS
           setUserConnection(currentStream, false);
@@ -333,12 +369,37 @@ const SocketContextProvider = ({children}) => {
     }
   };
 
+  const replaceVideoStream = (stream, currentStream, peer, isTrack) => {
+    if(stream.getVideoTracks().length) {
+      stream.getVideoTracks()[0].stop();
+      stream.removeTrack(stream.getVideoTracks()[0]);
+    }
+    stream.addTrack(isTrack ? currentStream : currentStream.getVideoTracks()[0]);
+    for(const [, value] of peer._connections) {
+      // FIX PEERJS NOT CLEARING DESTROYED _CONNECTIONS
+      if(value.length) {
+        for(const connection of value[0].peerConnection?.getSenders()) {
+          if(connection.track?.kind === "video" || connection.track === null) {
+            connection.replaceTrack(isTrack ? currentStream : currentStream.getVideoTracks()[0]);
+          }
+        }
+      }
+    }
+  };
+
   const changeDisplayName = (key, displayName) => {
     setVideoStreams(videos => ({...videos, [key]: {...videos[key], displayName}}));
   };
 
   const changeWebcamStatus = (key, hasWebcam) => {
     setVideoStreams(videos => ({...videos, [key]: {...videos[key], hasWebcam}}));
+  };
+
+  const fakeVideo = ({width = 640, height = 480} = {}) => {
+    const canvas = Object.assign(document.createElement("canvas"), {width, height});
+    canvas.getContext("2d").fillRect(0, 0, width, height);
+    const stream = canvas.captureStream();
+    return Object.assign(stream.getVideoTracks()[0], {enabled: false});
   };
 
   const fakeAudio = () => {
@@ -352,6 +413,7 @@ const SocketContextProvider = ({children}) => {
   return (
     <SocketContext.Provider value={{
       stream,
+      shareScreen,
       isHost,
       videoStreams,
       roomName,
@@ -360,6 +422,7 @@ const SocketContextProvider = ({children}) => {
       hasPeerError,
       hasSocketError,
       setHasWebcam,
+      setShareScreen,
       setDisplayName,
       setRoomName,
       setParams

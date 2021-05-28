@@ -37,6 +37,7 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
         }
         <VideoControls 
           stream={stream} 
+          hasWebcam={hasWebcam}
           displayName={displayName} 
           gainStreams={gainStreams} 
           handleMuted={handleMuted}

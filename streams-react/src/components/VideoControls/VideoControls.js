@@ -6,15 +6,15 @@ import { SocketContext } from "../../context/SocketContext";
 import styles from "./VideoControls.module.css";
 import {nameInput} from "../../data/roomInputs";
 
-const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
-  const {setDisplayName, stream: myStream, setHasWebcam} = useContext(SocketContext);
+const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted}) => {
+  const {setDisplayName, stream: myStream, setHasWebcam, shareScreen, setShareScreen} = useContext(SocketContext);
   const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 1, username: displayName});
   const [isMuted, setMuted] = useState(gainStreams?.isHost ? true : false);
   const [isVolumeFocused, setVolumeFocused] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [lastName, setLastName] = useState(displayName);
   const [, setUserName] = useStateToLocalStorage("userName");
-  const [playVideo, setPlayVideo] = useState(stream?.getVideoTracks().length ? true : false);
+  const [playVideo, setPlayVideo] = useState(stream?.getVideoTracks()[0].enabled ? true : false);
   const [playMic, setPlayMic] = useState(stream?.getAudioTracks().length ? true : false);
   const [isMyStream] = useState(stream?.id === myStream?.id);
   const [isFocused, setIsFocused] = useState(false);
@@ -40,6 +40,15 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
     }
   }, [values.volume, isMuted, handleMuted]);
 
+  useEffect(() => {
+    if(hasWebcam) {
+      setPlayVideo(p => true);
+    }
+    else {
+      setPlayVideo(p => false);
+    }
+  }, [hasWebcam]);
+
   const handleMicClick = () => {
     if(!stream.getAudioTracks().length) return;
     if(playMic) {
@@ -55,6 +64,7 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
 
   const handleVideoClick = () => {
     if(!stream.getVideoTracks().length) return;
+    if(stream.getVideoTracks()[0].canvas) return;
     if(playVideo) {
       stream.getVideoTracks()[0].enabled = false;
       setPlayVideo(false);
@@ -65,6 +75,10 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
       setPlayVideo(true);
       setHasWebcam(true);
     }
+  };
+
+  const handleScreenClick = () => {
+    setShareScreen(!shareScreen);
   };
 
   const handleVolumeClick = (e) => {
@@ -135,6 +149,16 @@ const VideoControls = ({stream, displayName, gainStreams, handleMuted}) => {
       <div className={`${styles.controls__tray} ${isFocused ? styles["controls__tray--active"] : ""}`}>
         {isMyStream
           ? <>
+              <button 
+                type="button" 
+                className={`${styles.screen__button} ${styles.control__button}`}
+                title={shareScreen ? "Stop Screen Share" : "Share Screen"}
+                onClick={handleScreenClick}
+                onFocus={handleControlsFocus}
+                onBlur={handleControlsFocus}
+              >
+                <i className="fas fa-desktop"></i>
+              </button>
               <button 
                 type="button" 
                 className={`${styles.video__button} ${styles.control__button}`} 
