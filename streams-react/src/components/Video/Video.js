@@ -68,7 +68,7 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
 
   return (
     <div className={`${styles.container} ${isMuted ? styles.muted : ""} ${isTalking ? styles.speaking : styles.silent}`}>
-      <div className={styles.wrapper} ref={wrapperRef}>
+      <div className={styles.wrapper} ref={wrapperRef} onDoubleClick={handleFullScreen}>
         {hasWebcam
           ? <video 
               id={stream.id} 
