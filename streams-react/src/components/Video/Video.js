@@ -5,7 +5,9 @@ import styles from "./Video.module.css";
 
 const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
   const video = useRef(stream);
+  const wrapperRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     if(video.current) {
@@ -13,17 +15,64 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
     }
   }, [video, stream, hasWebcam]);
 
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', handleFullScreenExit, false);
+    document.addEventListener('mozfullscreenchange', handleFullScreenExit, false);
+    document.addEventListener('MSFullscreenChange', handleFullScreenExit, false);
+    document.addEventListener('webkitfullscreenchange', handleFullScreenExit, false);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenExit, false);
+      document.removeEventListener('mozfullscreenchange', handleFullScreenExit, false);
+      document.removeEventListener('MSFullscreenChange', handleFullScreenExit, false);
+      document.removeEventListener('webkitfullscreenchange', handleFullScreenExit, false);
+    };
+  }, []);
+
   const handleMuted = () => {
     setIsMuted(!isMuted);
   };
 
+  const handleFullScreen = () => {
+    const element = wrapperRef.current;
+    const doc = window.document;
+
+    const requestFullScreen = 
+                  element.requestFullscreen ||
+                  element.mozRequestFullScreen ||
+                  element.webkitRequestFullScreen ||
+                  element.msRequestFullscreen;
+    const cancelFullScreen = 
+                  doc.exitFullscreen || 
+                  doc.mozCancelFullScreen || 
+                  doc.webkitExitFullscreen || 
+                  doc.msExitFullscreen;
+    if (!doc.fullscreenElement && !doc.mozFullScreenElement && 
+      !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+      requestFullScreen.call(element);
+      setIsFullScreen(true);
+    } else {
+      cancelFullScreen.call(doc);
+      setIsFullScreen(false);
+    }
+  };
+
+  const handleFullScreenExit = () => {
+    const doc = window.document;
+
+    if (!doc.fullscreenElement && !doc.mozFullScreenElement && 
+      !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+        setIsFullScreen(false);
+      }
+  };
+
   return (
     <div className={`${styles.container} ${isMuted ? styles.muted : ""} ${isTalking ? styles.speaking : styles.silent}`}>
-      <div className={styles.wrapper}>
+      <div className={styles.wrapper} ref={wrapperRef}>
         {hasWebcam
           ? <video 
               id={stream.id} 
-              className={styles.video} 
+              className={`${styles.video} ${isFullScreen ? styles["video--fullscreen"] : ""}`} 
               playsInline 
               ref={video} 
               autoPlay 
@@ -31,7 +80,7 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
               data-video-stream="video-stream"
             >
             </video>
-          : <div className={styles.identicon__container} data-video-stream="video-stream">
+          : <div id={stream.id} className={styles.identicon__container} data-video-stream="video-stream">
               <Identicon seed={stream.id} />
             </div>
         }
@@ -41,6 +90,8 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
           displayName={displayName} 
           gainStreams={gainStreams} 
           handleMuted={handleMuted}
+          handleFullScreen={handleFullScreen}
+          isFullScreen={isFullScreen}
         />
       </div>
     </div>

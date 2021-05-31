@@ -64,10 +64,16 @@ const SocketContextProvider = ({children}) => {
       if(shareScreen) {
         navigator.mediaDevices.getDisplayMedia()
           .then(currentStream => {
+            // EVENT LISTENER FOR WHEN CHROME STOP SHARE BUTTON CLICKED
+            currentStream.getVideoTracks()[0].addEventListener("ended", () => {
+              setShareScreen(false);
+            });
+            
             replaceVideoStream(stream, currentStream, peer);
             setHasWebcam(true);
           })
           .catch(e => {
+            setShareScreen(false);
             console.log(e);
           });
       }
