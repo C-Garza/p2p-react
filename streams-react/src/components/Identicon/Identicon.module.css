@@ -1,6 +1,4 @@
 .identicon {
   border-radius: 5px;
-  max-height: 480px;
-  object-fit: none;
-  min-width: 300px;
+  height: 25%;
 }

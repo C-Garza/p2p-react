@@ -3,9 +3,10 @@ import VideoControls from "../VideoControls/VideoControls";
 import Identicon from "../Identicon/Identicon";
 import styles from "./Video.module.css";
 
-const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
+const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam, containerStyles}) => {
   const video = useRef(stream);
   const wrapperRef = useRef(null);
+  const containerRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -66,8 +67,17 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam}) => {
       }
   };
 
+  const contianerMarginStyles = containerRef.current ?  window.getComputedStyle(containerRef.current) : "0px";
+
   return (
-    <div className={`${styles.container} ${isMuted ? styles.muted : ""} ${isTalking ? styles.speaking : styles.silent}`}>
+    <div 
+      ref={containerRef}
+      className={`${styles.container} ${isMuted ? styles.muted : ""} ${isTalking ? styles.speaking : styles.silent}`}
+      style={{
+        width: `calc(${containerStyles.width}px - (${contianerMarginStyles.marginLeft} + ${contianerMarginStyles.marginRight}))`, 
+        height: `calc(${containerStyles.height}px - (${contianerMarginStyles.marginTop} + ${contianerMarginStyles.marginBottom}))`
+      }}
+    >
       <div className={styles.wrapper} ref={wrapperRef} onDoubleClick={handleFullScreen}>
         {hasWebcam
           ? <video 
