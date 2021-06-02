@@ -123,10 +123,15 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
     setIsFocused(!isFocused);
   };
 
+  // PREVENT DOUBLECLICK TRAY ITEMS FROM TRIGGERING FULLSCREEN
+  const handleDoubleClick = (e) => {
+    e.stopPropagation();
+  };
+
   const volumeTitle = Math.floor(values.volume * 100);
 
   return(
-    <div className={styles.video__tray}>
+    <div className={styles.video__tray} onDoubleClick={handleDoubleClick}>
       <EditWrapper 
         inputs={formInputs} 
         handleChange={handleChange} 
