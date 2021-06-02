@@ -48,7 +48,7 @@ const peerSocketConnection = (server) => {
       });
 
       // SEND HOST ROOM NAME IF NOT HOST
-      if(!roomName.length) {
+      if(!users[userID].isHost) {
         io.to(socket.id).emit("room-name", room);
       }
 
