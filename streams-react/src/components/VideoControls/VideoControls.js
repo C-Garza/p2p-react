@@ -5,6 +5,7 @@ import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
 import { SocketContext } from "../../context/SocketContext";
 import styles from "./VideoControls.module.css";
 import {nameInput} from "../../data/roomInputs";
+import VideoControlsButton from "../VideoControlsButton/VideoControlsButton";
 
 const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted, handleFullScreen, isFullScreen}) => {
   const {setDisplayName, stream: myStream, setHasWebcam, shareScreen, setShareScreen} = useContext(SocketContext);
@@ -154,36 +155,27 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
       <div className={`${styles.controls__tray} ${isFocused ? styles["controls__tray--active"] : ""}`}>
         {isMyStream
           ? <>
-              <button 
-                type="button" 
-                className={`${styles.video__button} ${styles.control__button}`} 
+              <VideoControlsButton 
+                buttonClass="video__button"
                 title={playVideo ? "Stop Video" : "Show Video"}
-                onClick={handleVideoClick}
-                onFocus={handleControlsFocus}
-                onBlur={handleControlsFocus}
-              >
-                <i className={`fas ${!playVideo ? `fa-video-slash ${styles["button--stop"]}` : `fa-video`}`}></i>
-              </button>
-              <button 
-                type="button" 
-                className={`${styles.mic__button} ${styles.control__button}`} 
+                iconClass={`fas ${!playVideo ? `fa-video-slash ${styles["button--stop"]}` : `fa-video`}`}
+                handleClick={handleVideoClick}
+                handleFocus={handleControlsFocus}
+              />
+              <VideoControlsButton 
+                buttonClass="mic__button"
                 title={playMic ? "Mute" : "Unmute"}
-                onClick={handleMicClick}
-                onFocus={handleControlsFocus}
-                onBlur={handleControlsFocus}
-              >
-                <i className={`fas ${!playMic ? `fa-microphone-slash ${styles["button--stop"]}` : `fa-microphone`}`}></i>
-              </button>
-              <button 
-                type="button" 
-                className={`${styles.screen__button} ${styles.control__button}`}
+                iconClass={`fas ${!playMic ? `fa-microphone-slash ${styles["button--stop"]}` : `fa-microphone`}`}
+                handleClick={handleMicClick}
+                handleFocus={handleControlsFocus}
+              />
+              <VideoControlsButton 
+                buttonClass="screen__button"
                 title={shareScreen ? "Stop Screen Share" : "Share Screen"}
-                onClick={handleScreenClick}
-                onFocus={handleControlsFocus}
-                onBlur={handleControlsFocus}
-              >
-                <i className={`fas fa-desktop ${!shareScreen ? "" : styles["button--stop"]}`}></i>
-              </button>
+                iconClass={`fas fa-desktop ${!shareScreen ? "" : styles["button--stop"]}`}
+                handleClick={handleScreenClick}
+                handleFocus={handleControlsFocus}
+              />
             </>
           : <div className={`${styles.volume__controls} ${isVolumeFocused ? styles[`volume__controls--focus`]: ""}`}>
               <button type="button" className={styles.volume__button} onClick={handleVolumeClick} onFocus={handleControlsFocus} onBlur={handleControlsFocus}>
@@ -204,16 +196,13 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
               />
             </div>
         }
-        <button
-          type="button"
-          className={`${styles.fullscreen__button} ${styles.control__button}`}
+        <VideoControlsButton 
+          buttonClass="fullscreen__button"
           title={isFullScreen ? "Exit Fullscreen" : "Fullscreen"}
-          onClick={handleFullScreen}
-          onFocus={handleControlsFocus}
-          onBlur={handleControlsFocus}
-        >
-          <i className={`fas ${!isFullScreen ? "fa-expand" : "fa-compress"}`}></i>
-        </button>
+          iconClass={`fas ${!isFullScreen ? "fa-expand" : "fa-compress"}`}
+          handleClick={handleFullScreen}
+          handleFocus={handleControlsFocus}
+        />
       </div>
     </div>
   );
