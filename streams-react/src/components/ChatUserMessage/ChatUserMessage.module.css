@@ -1,0 +1,7 @@
+.container {
+  border: 2px solid #212121;
+  border-radius: 5px;
+}
+.message {
+  padding: 5px;
+}

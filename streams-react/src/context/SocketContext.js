@@ -425,6 +425,7 @@ const SocketContextProvider = ({children}) => {
       roomName,
       isTalking,
       gainStreams,
+      users,
       hasPeerError,
       hasSocketError,
       setHasWebcam,

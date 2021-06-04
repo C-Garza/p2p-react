@@ -1,0 +1,7 @@
+.container {
+  flex: 1;
+  padding-left: 15px;
+}
+.header {
+  margin: 0;
+}

@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid #212121;
+  width: 100%;
+  flex: none;
+}
+.chat__header {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+.chat__online {
+  padding: 5px;
+}

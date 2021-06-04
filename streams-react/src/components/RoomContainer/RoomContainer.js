@@ -1,8 +1,10 @@
 import {useEffect, useContext} from "react";
 import {SocketContext} from "../../context/SocketContext";
+import {ChatContext} from "../../context/ChatContext";
 import {useLocation} from "react-router-dom";
 import VideoRoomHeader from "../VideoRoomHeader/VideoRoomHeader";
 import VideoContainer from "../VideosContainer/VideosContainer";
+import ChatContainer from "../ChatContainer/ChatContainer";
 import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
 import styles from "./RoomContainer.module.css";
 
@@ -19,6 +21,7 @@ const RoomContainer = () => {
     hasPeerError,
     hasSocketError
   } = useContext(SocketContext);
+  const {isChatOpen} = useContext(ChatContext);
   const location = useLocation();
   const [userName] = useStateToLocalStorage("userName");
   const [roomName, setRoomName] = useStateToLocalStorage("roomName");
@@ -40,7 +43,7 @@ const RoomContainer = () => {
   }, [setParams, roomID, location]);
 
   return(
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isChatOpen ? styles["container--shrink"] : ""}`}>
       <VideoRoomHeader room={hostRoomName ? hostRoomName : roomName} setRoomName={setRoomName} isHost={isHost} />
       <VideoContainer 
         videos={videoStreams} 
@@ -49,6 +52,7 @@ const RoomContainer = () => {
         hasPeerError={hasPeerError}
         hasSocketError={hasSocketError}
       />
+      <ChatContainer />
     </div>
   );
 };

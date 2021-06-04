@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  white-space: pre;
+}
+.identicon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 100%;
+  overflow: hidden;
+  background-color: #212121;
+}
+.container img {
+  height: 30px;
+}
+.message__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-left: 15px;
+}
+.message {
+  margin-top: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
