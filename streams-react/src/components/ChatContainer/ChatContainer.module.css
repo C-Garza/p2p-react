@@ -14,6 +14,10 @@
 .chat__container {
   width: 100%;
   height: 100%;
+  transition: all 0.85s ease-in;
+}
+.chat__container--closed {
+  visibility: hidden;
 }
 .chat__button {
   position: absolute;
@@ -21,12 +25,68 @@
   left: 0;
   height: 50px;
   width: 25px;
+  color: #EEEEEE;
   background-color: rgba(0,0,0,0.6);
   border: 1px solid black;
   cursor: pointer;
   transform: translate(-100%, -50%);
 }
+.chat__button:hover {
+  color: white;
+  background-color: rgba(0,0,0,0.4);
+}
 .chevron {
   color: white;
   font-size: 1.2rem;
+  transition: all 0.35s;
 }
+.chevron--open {
+  animation: rotateChevron 0.85s ease-in forwards;
+}
+.chevron--closed {
+  animation: rotateChevron 0.85s ease-in forwards;
+}
+.hidden {
+  display: none;
+}
+@keyframes rotateChevron {
+  0% {
+    transform: rotateZ(0);
+  }
+  30% {
+    transform: rotateZ(210deg);
+  }
+  60% {
+    transform: rotateZ(160deg);
+  }
+  75% {
+    transform: rotateZ(188deg);
+  }
+  90% {
+    transform: rotateZ(175deg);
+  }
+  100% {
+    transform: rotateZ(180deg);
+  }
+};
+
+@keyframes rotateChevronReverse {
+  0% {
+    transform: rotateZ(180deg);
+  }
+  30% {
+    transform: rotateZ(-30deg);
+  }
+  60% {
+    transform: rotateZ(20deg);
+  }
+  75% {
+    transform: rotateZ(-8deg);
+  }
+  90% {
+    transform: rotateZ(5deg);
+  }
+  100% {
+    transform: rotateZ(0);
+  }
+};

@@ -1,21 +1,26 @@
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useState, useRef, useContext} from "react";
 import ErrorDisplay from "../ErrorDisplay/ErrorDisplay";
 import Loading from "../Loading/Loading";
 import Video from "../Video/Video";
+import {ChatContext} from "../../context/ChatContext";
 import styles from "./VideosContainer.module.css";
 
 const VideoContainer = ({videos, isTalking, gainStreams, hasPeerError, hasSocketError}) => {
   const [containerStyles, setContainerStyles] = useState({});
+  const {isChatOpen, chatDimensions} = useContext(ChatContext);
   const containerRef = useRef(null);
 
   useEffect(() => {
     const recalculateLayout = () => {
       let elFromTop = 0;
+      let chatWidth = 0;
+      
       if(containerRef.current) {
         elFromTop = Math.floor(containerRef.current.getBoundingClientRect().top + window.pageYOffset) + 15;
       }
+      if(isChatOpen) chatWidth = chatDimensions.width;
       const aspectRatio = 16 / 9;
-      const screenWidth = document.body.getBoundingClientRect().width;
+      const screenWidth = document.body.getBoundingClientRect().width - chatWidth;
       const screenHeight = window.innerHeight - elFromTop;
       const videoCount = Object.keys(videos).length;
   
@@ -72,7 +77,7 @@ const VideoContainer = ({videos, isTalking, gainStreams, hasPeerError, hasSocket
     return () => {
       window.removeEventListener("resize", recalculateLayout);
     };
-  }, [videos]);
+  }, [videos, isChatOpen, chatDimensions]);
 
   const renderVideo = () => {
     return Object.values(videos).map((video, i) => {
