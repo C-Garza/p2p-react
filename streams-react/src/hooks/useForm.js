@@ -15,6 +15,13 @@ export default function useForm(init = {}) {
       [name]: value
     });
   };
+  const handleAdd = e => {
+    let {value, name} = e.target;
+    setValues({
+      ...values,
+      [name]: values[name] + value
+    });
+  };
   const resetForm = () => {
     setValues(init);
   };
@@ -31,6 +38,7 @@ export default function useForm(init = {}) {
     values,
     setValues,
     handleChange,
+    handleAdd,
     resetForm,
     clearForm,
     clearInput

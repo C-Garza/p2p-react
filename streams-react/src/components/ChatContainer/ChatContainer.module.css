@@ -30,8 +30,9 @@
   border: 1px solid black;
   cursor: pointer;
   transform: translate(-100%, -50%);
+  transition: all 0.1s ease-out;
 }
-.chat__button:hover {
+.chat__button:hover, .chat__button:focus {
   color: white;
   background-color: rgba(0,0,0,0.4);
 }

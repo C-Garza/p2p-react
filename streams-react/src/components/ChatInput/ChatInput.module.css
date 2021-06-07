@@ -8,7 +8,7 @@
 .input__container {
   flex: 0.75;
   margin-left: 15px;
-  margin-right: 15px;
+  margin-right: 5px;
 }
 .input__container label {
   position: absolute;
@@ -22,8 +22,45 @@
   border: 0;
 }
 .controls__container {
+  display: flex;
+  justify-content: space-around;
   flex: 0.25;
+}
+.emoji__container {
+  position: relative;
+  margin-right: 5px;
+}
+.emoji__button {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.emoji__button:hover, .emoji__button:focus {
+  transform: scale(1.1);
+}
+.emoji__mart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-95%, -105%);
 }
 .send__button {
   cursor: pointer;
+  font-size: 18px;
+}
+
+/*** 
+  EMOJI MART CUSTOM CSS 
+***/
+
+:global(.emoji-mart) {
+  width: 300px !important;
+}
+:global(.emoji-mart-title-label) {
+  font-size: 16px !important;
+}
+:global(.emoji-mart-emoji) {
+  cursor: pointer !important;
+}
+:global(.emoji-mart-emoji) > span {
+  cursor: pointer !important;
 }
