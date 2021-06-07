@@ -22,13 +22,53 @@ const ChatInput = () => {
   });
 
   useEffect(() => {
+    const convertInputToEmoji = (userText) => {
+      if(!userText.length) return;
+      const textArray = userText.split(" ");
+      let newValues = [];
+  
+      for(let value of textArray) {
+        if(value[0] !== ":") {
+          newValues.push(value);
+          continue;
+        }
+  
+        let emojiArray = [];
+        let isEmojiCode = value[value.length - 1] === ":" && value.length > 1;
+  
+        if(isEmojiCode) value = value.replaceAll(":", "");
+  
+        emojiArray = emojiIndex.search(value).filter(emoji => {
+          if(!isEmojiCode && emoji.emoticons.length) {
+            for(let emoticon of emoji.emoticons) {
+              if(emoticon === value) return emoji.native;
+            }
+          }
+          if(value === emoji.id) return emoji.native;
+          return false
+        });
+        
+        if(emojiArray.length) newValues.push(emojiArray[0].native);
+        else {
+          newValues.push(value);
+        }
+      }
+  
+      let newText = newValues.join(" ");
+      if(newText !== userText) {
+        const pseudoTarget = {target : {value: newText, name: "message"}};
+        hasConvertedRef.current = true;
+        handleChange(pseudoTarget);
+      }
+    };
+
     if(!hasConvertedRef.current) {
       convertInputToEmoji(values.message);
     }
     else {
       hasConvertedRef.current = false;
     }
-  }, [values]);
+  }, [values, handleChange]);
 
   useEffect(() => {
     if(showEmojis) {
@@ -64,46 +104,6 @@ const ChatInput = () => {
   const handleEmoji = (e) => {
     const pseudoTarget = {target : {value: e.native, name: "message"}};
     handleAdd(pseudoTarget);
-  };
-
-  const convertInputToEmoji = (userText) => {
-    if(!userText.length) return;
-    const textArray = userText.split(" ");
-    let newValues = [];
-
-    for(let value of textArray) {
-      if(value[0] !== ":") {
-        newValues.push(value);
-        continue;
-      }
-
-      let emojiArray = [];
-      let isEmojiCode = value[value.length - 1] === ":" && value.length > 1;
-
-      if(isEmojiCode) value = value.replaceAll(":", "");
-
-      emojiArray = emojiIndex.search(value).filter(emoji => {
-        if(!isEmojiCode && emoji.emoticons.length) {
-          for(let emoticon of emoji.emoticons) {
-            if(emoticon === value) return emoji.native;
-          }
-        }
-        if(value === emoji.id) return emoji.native;
-        return false
-      });
-      
-      if(emojiArray.length) newValues.push(emojiArray[0].native);
-      else {
-        newValues.push(value);
-      }
-    }
-
-    let newText = newValues.join(" ");
-    if(newText !== userText) {
-      const pseudoTarget = {target : {value: newText, name: "message"}};
-      hasConvertedRef.current = true;
-      handleChange(pseudoTarget);
-    }
   };
 
   return(
