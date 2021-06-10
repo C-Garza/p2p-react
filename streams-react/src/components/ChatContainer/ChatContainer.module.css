@@ -69,25 +69,4 @@
   100% {
     transform: rotateZ(180deg);
   }
-};
-
-@keyframes rotateChevronReverse {
-  0% {
-    transform: rotateZ(180deg);
-  }
-  30% {
-    transform: rotateZ(-30deg);
-  }
-  60% {
-    transform: rotateZ(20deg);
-  }
-  75% {
-    transform: rotateZ(-8deg);
-  }
-  90% {
-    transform: rotateZ(5deg);
-  }
-  100% {
-    transform: rotateZ(0deg);
-  }
-};
+}
