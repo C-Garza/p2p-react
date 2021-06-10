@@ -1,5 +1,4 @@
 import {useEffect, useContext} from "react";
-import styles from "./RoomContainer.module.css";
 import {SocketContext} from "../../context/SocketContext";
 import {ChatContext} from "../../context/ChatContext";
 import {useLocation} from "react-router-dom";
@@ -7,6 +6,7 @@ import VideoRoomHeader from "../VideoRoomHeader/VideoRoomHeader";
 import VideoContainer from "../VideosContainer/VideosContainer";
 import ChatContainer from "../ChatContainer/ChatContainer";
 import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
+import styles from "./RoomContainer.module.css";
 
 const RoomContainer = () => {
   const {
