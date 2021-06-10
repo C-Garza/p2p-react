@@ -52,7 +52,7 @@
 }
 @keyframes rotateChevron {
   0% {
-    transform: rotateZ(0);
+    transform: rotateZ(0deg);
   }
   30% {
     transform: rotateZ(210deg);
@@ -88,6 +88,6 @@
     transform: rotateZ(5deg);
   }
   100% {
-    transform: rotateZ(0);
+    transform: rotateZ(0deg);
   }
 };
