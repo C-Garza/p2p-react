@@ -1,7 +1,7 @@
 import {useEffect, useRef, useContext} from "react";
 import ChatList from "../ChatList/ChatList";
-import styles from "./ChatContainer.module.css";
 import {ChatContext} from "../../context/ChatContext";
+import styles from "./ChatContainer.module.css";
 
 const ChatContainer = () => {
   const {isChatOpen, setIsChatOpen, setChatDimensions} = useContext(ChatContext);

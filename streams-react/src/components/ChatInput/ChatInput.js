@@ -1,12 +1,12 @@
 import {useEffect, useState, useRef, useContext} from "react";
 import useForm from "../../hooks/useForm";
-import "emoji-mart/css/emoji-mart.css";
-import {Picker, Emoji, emojiIndex} from "emoji-mart";
-import styles from "./ChatInput.module.css";
 import {ChatContext} from "../../context/ChatContext";
 import {messageInputs} from "../../data/messageInputs";
 import {emojiTrayMap} from "../../data/emojiTrayMap";
 import EditWrapper from "../EditWrapper/EditWrapper";
+import "emoji-mart/css/emoji-mart.css";
+import {Picker, Emoji, emojiIndex} from "emoji-mart";
+import styles from "./ChatInput.module.css";
 
 const ChatInput = () => {
   const {values, handleChange, handleAdd, clearInput} = useForm({message: ""});
