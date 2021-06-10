@@ -19,10 +19,19 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.1s ease-out;
 }
+.textarea {
+  min-height: 40px;
+  max-height: 104px;
+  vertical-align: bottom;
+  font-family: "Lato", Arial, Helvetica, sans-serif;
+  resize: none;
+  transition: none;
+}
 .input__options {
   position: absolute;
   top: 50%;
   right: 0;
+  height: calc(100% - 24px);
   transform: translate(100%, -50%);
   transition: all 0.1s ease-out;
 }
@@ -31,6 +40,7 @@
   transition: none;
 }
 .clear, .paste {
+  height: 100%;
   padding: 9px;
   color: #9E9E9E;
   cursor: pointer;
@@ -53,4 +63,9 @@
 }
 .input:hover + .input__options .paste {
   border-left: 2px solid #212121;
+}
+.input__options--active.move__scrollbar, 
+.input:hover + .input__options.move__scrollbar, 
+.input__options.move__scrollbar:hover {
+  transform: translate(-30%, -50%);
 }

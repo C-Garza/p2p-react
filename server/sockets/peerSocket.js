@@ -1,6 +1,7 @@
 const socketio = require("socket.io");
 const {addUser, setUserHost, changeUserName, changeWebcamStatus, removeUser, getUsersInRoom} = require("../utils/users");
 const {addRoom, updateRoom, getRoom, removeRoom} = require("../utils/rooms");
+const {addMessageRoom, addMessage, getRoomMessages, removeMessageRoom} = require("../utils/messages");
 
 const peerSocketConnection = (server) => {
   const io = socketio(server, {
@@ -29,14 +30,21 @@ const peerSocketConnection = (server) => {
 
       const users = getUsersInRoom(roomID);
       const room = getRoom(roomID);
+      let messageOffset = 20;
+      let chatMessages = getRoomMessages(roomID);
+
+      if(!chatMessages.length) {
+        addMessageRoom(roomID);
+        chatMessages = getRoomMessages(roomID);
+      }
 
       setUserHost(userID, roomID);
 
       socket.emit("peer-server-connected");
 
       // SEND USERS IN ROOM TO CLIENT
-      socket.on("get-users-list", (hasWebcam) => {
-        changeWebcamStatus(userID, hasWebcam);
+      socket.on("get-users-list", (hasWebcam, init=true) => {
+        if(init) changeWebcamStatus(userID, hasWebcam);
         const users = getUsersInRoom(roomID);
 
         io.to(roomID).emit("users-list", users);
@@ -45,6 +53,7 @@ const peerSocketConnection = (server) => {
       // BROADCAST TO ROOM A NEW CLIENT HAS JOINED
       socket.on("stream-ready", () => {
         socket.broadcast.to(roomID).emit("user-connected", userID);
+        socket.emit("joined-room");
       });
 
       // SEND HOST ROOM NAME IF NOT HOST
@@ -69,6 +78,26 @@ const peerSocketConnection = (server) => {
         const newUsers = getUsersInRoom(roomID);
         socket.broadcast.to(roomID).emit("webcam-status-changed", id, newUsers, streamID, hasWebcam);
       });
+
+      // CHAT LISTENERS
+      socket.on("get-messages-list", () => {
+        const lastMessages = chatMessages.slice(-messageOffset);
+        socket.emit("messages-list", lastMessages);
+      });
+
+      socket.on("send-message", (message) => {
+        addMessage(roomID, message);
+        io.to(roomID).emit("message-received", message);
+      });
+
+      socket.on("get-older-messages", offset => {
+        messageOffset += offset;
+        const lastMessages = getRoomMessages(roomID).slice(-messageOffset);
+        socket.emit("older-messages-received", lastMessages);
+        if(lastMessages.length < messageOffset) {
+          socket.emit("all-older-messages-received", true);
+        }
+      });
   
       socket.on("disconnect", () => {
         socket.broadcast.to(roomID).emit("user-disconnected", userID);
@@ -78,6 +107,7 @@ const peerSocketConnection = (server) => {
         // IF NO ONE IS IN ROOM, REMOVE ROOM
         if(!io.sockets.adapter.rooms.get(roomID)?.size) {
           removeRoom(roomID);
+          removeMessageRoom(roomID);
           return;
         }
 

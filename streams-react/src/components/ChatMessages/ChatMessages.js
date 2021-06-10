@@ -1,49 +1,82 @@
+import {useRef, useContext, useEffect} from "react";
 import ChatUser from "../ChatUser/ChatUser";
+import {ChatContext} from "../../context/ChatContext";
+import {v4 as uuidv4} from "uuid";
 import styles from "./ChatMessages.module.css";
 
 const ChatMessages = () => {
+  const {messageList, isAtTop, setIsAtTop, hasOlderMessages, hasInitMessages} = useContext(ChatContext);
+  const containerRef = useRef(null);
+  const bottomMessagesRef = useRef(null);
 
-  const testData = [
-    {
-      userName: "Chris",
-      streamID: "stream1",
-      message: `Hello there!`,
-      createdAt: new Date().getTime()
-    },
-    {
-      userName: "Chris",
-      streamID: "stream1",
-      message: `Second message!`,
-      createdAt: new Date().getTime()
-    },
-    {
-      userName: "Hans",
-      streamID: "stream2",
-      message: `How you doing?`,
-      createdAt: new Date().getTime()
-    },
-    {
-      userName: "Chris",
-      streamID: "stream1",
-      message: `Third Message!`,
-      createdAt: new Date().getTime()
+  const lastScrollHeight = containerRef.current?.scrollHeight;
+
+  useEffect(() => {
+    const newMessageScroll = () => {
+      if(!containerRef.current) return;
+
+      const scrollTop = containerRef.current.scrollTop;
+      const scrollHeight = containerRef.current.scrollHeight;
+      const height = containerRef.current.clientHeight;
+
+      if(scrollHeight === height && hasInitMessages && !isAtTop && hasOlderMessages) {
+        setIsAtTop(true);
+        return;
+      }
+      if(messageList.length && hasOlderMessages) {
+        containerRef.current.scrollTop = scrollHeight - lastScrollHeight;
+      }
+      if((scrollHeight - scrollTop) <= (height + 125) && scrollHeight !== height) {
+        bottomMessagesRef.current?.scrollIntoView();
+      }
+    };
+
+    newMessageScroll();
+  }, [messageList, isAtTop, lastScrollHeight, hasOlderMessages, setIsAtTop, hasInitMessages]);
+
+  useEffect(() => {
+    let containerRefValue = null;
+
+    const handleScroll = () => {
+      const scrollTop = containerRef.current.scrollTop;
+  
+      if(scrollTop === 0 && messageList.length && hasOlderMessages) {
+        setIsAtTop(prev => true);
+      }
+      else {
+        setIsAtTop(false);
+      }
+    };
+
+    if(containerRef.current) {
+      containerRef.current.addEventListener("scroll", handleScroll);
+      containerRefValue = containerRef.current;
     }
-  ];
 
-  const combineMessages = (testData) => {
-    if(!testData.length) return [];
+    return () => {
+      if(containerRefValue) {
+        containerRefValue.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [messageList, hasOlderMessages, setIsAtTop])
 
-    let messages = [...testData];
+  const combineMessages = (messagesData) => {
+    if(!messagesData.length) return [];
+
+    let messages = messagesData.map(obj => ({...obj}));
     let newMessages = [];
     let currentUser = messages[0];
+    currentUser.message = [currentUser.message];
 
     for(let i = 1; i < messages.length; i++) {
-      if(messages[i].userName === currentUser.userName) {
-        currentUser.message += `\n${messages[i].message}`;
+      if(!Array.isArray(currentUser.message)) currentUser.message = [currentUser.message];
+      if(messages[i].streamID === currentUser.streamID) {
+        currentUser.message = [...currentUser.message, messages[i].message];
       }
       else {
         newMessages.push(currentUser);
         currentUser = messages[i];
+        currentUser.message = [currentUser.message];
       }
     }
     
@@ -52,15 +85,22 @@ const ChatMessages = () => {
   };
 
   const renderMessages = () => {
-    const messages = combineMessages(testData);
-    return messages.map((msg, i)=> {
-      return <ChatUser key={msg.createdAt + i} messageData={msg} />;
+    const messages = combineMessages(messageList);
+    return messages.map((msg)=> {
+      return <ChatUser key={uuidv4()} messageData={msg} />;
     });
   };
 
   return(
-    <div className={styles.container}>
+    <div ref={containerRef} className={styles.container}>
+      <div className={styles.header}>
+        {hasOlderMessages
+          ? <div className={isAtTop ? styles.loading : ""}></div>
+          : <p className={styles.welcome__message}>Welcome to the Chat Room!</p>
+        }
+      </div>
       {renderMessages()}
+      <div ref={bottomMessagesRef}></div>
     </div>
   );
 };

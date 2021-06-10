@@ -1,7 +1,12 @@
 .container {
+  margin-top: 5px;
+  margin-bottom: 10px;
   border: 2px solid #212121;
   border-radius: 5px;
+  width: 100%;
 }
 .message {
   padding: 5px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }

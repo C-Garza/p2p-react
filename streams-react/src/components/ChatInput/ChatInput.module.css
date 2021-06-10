@@ -44,8 +44,38 @@
   transform: translate(-95%, -105%);
 }
 .send__button {
+  color: #28965A;
   cursor: pointer;
   font-size: 18px;
+}
+.send__button--active {
+  animation: sent 0.8s;
+}
+.send__button:hover {
+  color: #00E676;
+}
+.send__button:focus {
+  color: #00E676;
+}
+@keyframes sent {
+  0% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(0.75, 0.85);
+  }
+  30% {
+    transform: scale(1.2, 1.2);
+  }
+  50% {
+    transform: scale(0.95,0.95);
+  }
+  70% {
+    transform: scale(1.03,1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /*** 

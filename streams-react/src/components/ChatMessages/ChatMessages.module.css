@@ -3,3 +3,39 @@
   width: 100%;
   overflow-y: auto;
 }
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding-top: 15px;
+}
+.welcome__message {
+  font-weight: bold;
+}
+.loading {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  border-radius: 100%;
+  border: 3px solid red;
+  animation: spinner 0.75s linear infinite;
+}
+.loading:before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  height: 15px;
+  width: 15px;
+  background-color: white;
+  transform: rotate(45deg);
+}
+@keyframes spinner {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}

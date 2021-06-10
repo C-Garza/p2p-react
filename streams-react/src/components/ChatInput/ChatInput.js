@@ -1,16 +1,19 @@
-import { useEffect, useState, useRef} from "react";
-import FormInputs from "../FormInputs/FormInputs";
+import { useEffect, useState, useRef, useContext } from "react";
 import useForm from "../../hooks/useForm";
 import "emoji-mart/css/emoji-mart.css";
 import {Picker, Emoji, emojiIndex} from "emoji-mart";
 import styles from "./ChatInput.module.css";
+import {ChatContext} from "../../context/ChatContext";
 import {messageInputs} from "../../data/messageInputs";
 import {emojiTrayMap} from "../../data/emojiTrayMap";
+import EditWrapper from "../EditWrapper/EditWrapper";
 
 const ChatInput = () => {
   const {values, handleChange, handleAdd, clearInput} = useForm({message: ""});
   const [showEmojis, setShowEmojis] = useState(false);
   const [trayEmoji, setTrayEmoji] = useState("blush");
+  const [sent, setSent] = useState(false);
+  const {setMessage} = useContext(ChatContext);
   const hasConvertedRef = useRef(false);
   const nodeRef = useRef(null);
 
@@ -92,6 +95,20 @@ const ChatInput = () => {
   const handleClick = () => {
     setShowEmojis(!showEmojis);
   };
+
+  const handleSendClick = () => {
+    if(values.message.length) {
+      setMessage(values.message);
+      clearInput("message");
+      setSent(true);
+      setTimeout(() => {setSent(false)}, 900);
+    }
+  };
+
+  const handleSendSubmit = (e) => {
+    e.preventDefault();
+    handleSendClick();
+  }
   
   const handleEmojiHover = () => {
     let newEmoji = emojiTrayMap[Math.floor(Math.random() * emojiTrayMap.length)];
@@ -109,7 +126,14 @@ const ChatInput = () => {
   return(
     <div className={styles.container}>
       <div className={styles.input__container}>
-        <FormInputs inputs={formInputs} handleChange={handleChange} clearInput={clearInput} />
+        <EditWrapper 
+          inputs={formInputs} 
+          handleChange={handleChange} 
+          clearInput={clearInput} 
+          handleSubmit={handleSendSubmit} 
+          isEditing={true} 
+          hideButton={true}
+        />
       </div>
       <div className={styles.controls__container}>
         <div ref={nodeRef} className={styles.emoji__container}>
@@ -133,7 +157,9 @@ const ChatInput = () => {
             </div>
           }
         </div>
-        <button type="button" className={styles.send__button}><i className="fas fa-play"></i></button>
+        <button type="button" className={`${styles.send__button}`} onClick={handleSendClick}>
+          <i className={`fas fa-play ${styles.send__icon} ${sent ? styles["send__button--active"] : ""}`}></i>
+        </button>
       </div>
     </div>
   );

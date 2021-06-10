@@ -206,6 +206,7 @@ const SocketContextProvider = ({children}) => {
           let {[userID]: tmp, ...rest} = peers;
           setPeers(rest);
         }
+        socket.emit("get-users-list", null, false);
       });
       socket.on("users-list", userList => {
         setUsers({...userList});
@@ -418,10 +419,13 @@ const SocketContextProvider = ({children}) => {
 
   return (
     <SocketContext.Provider value={{
+      socket,
+      peer,
       stream,
       shareScreen,
       isHost,
       videoStreams,
+      displayName,
       roomName,
       isTalking,
       gainStreams,
