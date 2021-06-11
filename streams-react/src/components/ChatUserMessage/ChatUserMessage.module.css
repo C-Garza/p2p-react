@@ -10,3 +10,20 @@
   white-space: pre-wrap;
   overflow-wrap: break-word;
 }
+.link {
+  color: #2962FF;
+  text-decoration: underline;
+}
+.link:hover {
+  color: #0091EA;
+}
+.iframe__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  width: 100%;
+}
+iframe {
+  width: 100%;
+}

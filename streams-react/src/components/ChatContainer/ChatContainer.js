@@ -4,14 +4,16 @@ import {ChatContext} from "../../context/ChatContext";
 import styles from "./ChatContainer.module.css";
 
 const ChatContainer = () => {
-  const {isChatOpen, setIsChatOpen, setChatDimensions} = useContext(ChatContext);
+  const {isChatOpen, setIsChatOpen, chatDimensions, setChatDimensions} = useContext(ChatContext);
   const containerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
       const width = containerRef.current.getBoundingClientRect()?.width;
   
-      setChatDimensions(dimensions => ({...dimensions, width}));
+      if(width !== chatDimensions.width) {
+        setChatDimensions(dimensions => ({...dimensions, width}));
+      }
     };
 
     window.addEventListener("resize", handleResize);
@@ -20,7 +22,19 @@ const ChatContainer = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [setChatDimensions]);
+  }, [chatDimensions, setChatDimensions]);
+
+  useEffect(() => {
+    if(!isChatOpen) handleVideosReset();
+  }, [isChatOpen]);
+
+  const handleVideosReset = () => {
+    let videos = document.querySelectorAll(".embedded__video");
+    if(!videos.length) return;
+    videos.forEach(video => {
+      video.contentWindow.postMessage(`{"event":"command","func":"stopVideo","args":""}`, "*");
+    });
+  };
 
   const handleClick = () => {
     setIsChatOpen(!isChatOpen);

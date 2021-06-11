@@ -1,7 +1,6 @@
 import {useRef, useContext, useEffect} from "react";
 import ChatUser from "../ChatUser/ChatUser";
 import {ChatContext} from "../../context/ChatContext";
-import {v4 as uuidv4} from "uuid";
 import styles from "./ChatMessages.module.css";
 
 const ChatMessages = () => {
@@ -67,16 +66,19 @@ const ChatMessages = () => {
     let newMessages = [];
     let currentUser = messages[0];
     currentUser.message = [currentUser.message];
+    currentUser.id = [currentUser.id];
 
     for(let i = 1; i < messages.length; i++) {
       if(!Array.isArray(currentUser.message)) currentUser.message = [currentUser.message];
       if(messages[i].streamID === currentUser.streamID) {
         currentUser.message = [...currentUser.message, messages[i].message];
+        currentUser.id = [...currentUser.id, messages[i].id];
       }
       else {
         newMessages.push(currentUser);
         currentUser = messages[i];
         currentUser.message = [currentUser.message];
+        currentUser.id = [currentUser.id];
       }
     }
     
@@ -87,7 +89,7 @@ const ChatMessages = () => {
   const renderMessages = () => {
     const messages = combineMessages(messageList);
     return messages.map((msg)=> {
-      return <ChatUser key={uuidv4()} messageData={msg} />;
+      return <ChatUser key={msg.id[0]} messageData={msg} />;
     });
   };
 
