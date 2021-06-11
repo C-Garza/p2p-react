@@ -30,7 +30,7 @@ const ChatContainer = () => {
     <div ref={containerRef} className={`${styles.container} ${isChatOpen ? styles["container--on"] : ""}`}>
       <button type="button" className={styles.chat__button} onClick={handleClick}>
         <i className={`fas fa-chevron-left ${styles.chevron} ${isChatOpen ? styles["chevron--open"] : styles.hidden}`}></i>
-        <i className={`fas fa-chevron-right ${styles.chevron} ${isChatOpen ? styles.hidden : styles["chevron--open"]}`}></i>
+        <i className={`fas fa-chevron-right ${styles.chevron} ${isChatOpen ? styles.hidden : styles["chevron--closed"]}`}></i>
       </button>
       <div className={`${styles.chat__container} ${isChatOpen ? "" : styles["chat__container--closed"]}`}>
         <ChatList />
