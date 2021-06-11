@@ -7,5 +7,4 @@ Features include the ability to create a room and join a room with peers. In a r
 mute their streams, toggle their video stream on/off, and screenshare with peers.
 
 To-Do:
-* Text chat in room
 * Private Rooms
