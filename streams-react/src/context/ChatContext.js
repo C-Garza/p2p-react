@@ -24,7 +24,8 @@ const ChatContextProvider = ({children}) => {
           message: `${message}`,
           streamID: stream.id,
           createdAt: new Date().getTime(),
-          userName: displayName
+          userName: displayName,
+          ogMeta: {}
         };
         socket.emit("send-message", messageObj);
         setMessage(``);

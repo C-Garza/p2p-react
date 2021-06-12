@@ -1,10 +1,10 @@
 import {useState, useEffect} from "react";
+import isURL from "validator/lib/isURL";
 import styles from "./ChatUserMessage.module.css";
 
 const ChatUserMessage = ({message}) => {
   const [hasURL, setHasURL] = useState(false);
   const [srcURL, setSrcURL] = useState("");
-  const [messageURL, setMessageURL] = useState("");
 
   useEffect(() => {
     const checkMessagesForURL = () => {
@@ -19,7 +19,6 @@ const ChatUserMessage = ({message}) => {
         match = value.match(regExp);
         if(match && match[1].length === 11) {
           setHasURL(true);
-          setMessageURL(match[0]);
           setSrcURL(match[1]);
           return;
         }
@@ -32,21 +31,30 @@ const ChatUserMessage = ({message}) => {
   }, [message]);
 
   const handleStringToURL = () => {
-    if(!hasURL) return message;
+    let messageArr = message.replace(/\n/g, " ").split(" ");
+    let linksArray = messageArr.filter(msg => isURL(msg, {require_protocol: true}));
+    if(!linksArray.length) return message;
 
-    let newMessage = message;
-    let startIndex = message.indexOf(messageURL);
-    let beginningString = newMessage.slice(0, startIndex);
-    let link = <a href={messageURL}>{messageURL}</a>;
-    let endString = newMessage.substring(startIndex + messageURL.length);
-    newMessage = beginningString + link + endString;
-    return (
-      <>
-        {beginningString}
-        <a href={messageURL} className={styles.link} target="_blank" rel="noopener noreferrer" >{messageURL}</a>
-        {endString}
-      </>
-    );
+    let finalMessageArray = [];
+    let linkIndex = 0;
+    let startIndex = 0;
+    let beginningString = 0;
+    let link = null;
+
+    for(let i = 0; i < linksArray.length; i++) {
+      linkIndex = message.substring(beginningString).indexOf(linksArray[i]) + beginningString;
+      beginningString = message.slice(startIndex, linkIndex);
+      link = {link: linksArray[i]};
+      finalMessageArray.push(beginningString, link);
+      startIndex = linkIndex + linksArray[i].length;
+      beginningString = linkIndex + linksArray[i].length;
+    }
+    finalMessageArray.push(message.slice(startIndex));
+
+    return finalMessageArray.map((msg, i) => {
+      if(typeof msg === "string") return <span key={i}>{msg}</span>
+      return <a key={i} href={msg.link} className={styles.link} target="_blank" rel="noopener noreferrer" >{msg.link}</a>;
+    });
   };
 
   return (
