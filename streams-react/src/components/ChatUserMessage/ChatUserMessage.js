@@ -69,7 +69,7 @@ const ChatUserMessage = ({message}) => {
             frameBorder="0" 
             height="200"
             allowFullScreen 
-            src={`https://www.youtube.com/embed/${srcURL}?autoplay=1&enablejsapi=1&rel=0&version=3`}
+            src={`https://www.youtube.com/embed/${srcURL}?autoplay=0&enablejsapi=1&rel=0&version=3`}
           ></iframe>
         </div>
       }
