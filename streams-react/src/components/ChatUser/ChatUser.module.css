@@ -16,7 +16,7 @@
   overflow: hidden;
   background-color: #212121;
 }
-.container img {
+.identicon img {
   height: 30px;
 }
 .message__header {

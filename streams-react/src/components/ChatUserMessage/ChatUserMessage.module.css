@@ -27,3 +27,54 @@
 iframe {
   width: 100%;
 }
+.ogCard__container {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+.ogCard__link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.ogCard__container:hover .ogCard__description__container,
+.ogCard__link:focus .ogCard__description__container  {
+  background-color: #C2C2C2;
+}
+.ogCard__container:hover .ogCard__image,
+.ogCard__link:focus .ogCard__image {
+  transform: scale(1.1);
+}
+.ogCard__image__container {
+  display: flex;
+  justify-content: center;
+  height: 150px;
+  width: 100%;
+  border-top: 2px solid #212121;
+  overflow: hidden;
+}
+.ogCard__image {
+  height: 100%;
+  transition: all 0.1s ease-out;
+}
+.ogCard__description__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  min-height: 50px;
+  padding: 5px;
+  font-weight: bold;
+  background-color: #DBDBDB;
+  transition: all 0.1s ease-out;
+}
+.ogCard__description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}

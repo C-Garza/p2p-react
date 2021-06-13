@@ -1,4 +1,6 @@
 const {v4: uuidV4} = require("uuid");
+const {isURL} = require("validator");
+const ogs = require("open-graph-scraper");
 
 let messages = {};
 // messages = {
@@ -13,8 +15,28 @@ const addMessageRoom = (id) => {
 };
 
 const addMessage = (id, message) => {
-  message.id = uuidV4() + message.createdAt;
-  messages[id].messages.push(message);
+  let messageArr = message.message.replace(/\n/g, " ").split(" ");
+  let linksArray = messageArr.filter(msg => isURL(msg, {require_protocol: true}));
+
+  if(!linksArray.length) {
+    message.id = uuidV4() + message.createdAt;
+    messages[id].messages.push(message);
+    return message;
+  }
+
+  const options = {url: linksArray[0]};
+  return ogs(options).then(data => {
+    const {error, result} = data;
+    message.id = uuidV4() + message.createdAt;
+    messages[id].messages.push(message);
+    message.ogMeta = {...result};
+    return message;
+  }).catch(err => {
+    console.log(err);
+    message.id = uuidV4() + message.createdAt;
+    messages[id].messages.push(message);
+    return message;
+  });
 };
 
 const getRoomMessages = (id) => {

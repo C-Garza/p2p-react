@@ -2,7 +2,7 @@ import {useState, useEffect} from "react";
 import isURL from "validator/lib/isURL";
 import styles from "./ChatUserMessage.module.css";
 
-const ChatUserMessage = ({message}) => {
+const ChatUserMessage = ({message, ogMeta}) => {
   const [hasURL, setHasURL] = useState(false);
   const [srcURL, setSrcURL] = useState("");
 
@@ -53,7 +53,7 @@ const ChatUserMessage = ({message}) => {
 
     return finalMessageArray.map((msg, i) => {
       if(typeof msg === "string") return <span key={i}>{msg}</span>
-      return <a key={i} href={msg.link} className={styles.link} target="_blank" rel="noopener noreferrer" >{msg.link}</a>;
+      return <a key={i} href={msg.link} className={styles.link} target="_blank" rel="noopener noreferrer">{msg.link}</a>;
     });
   };
 
@@ -71,6 +71,18 @@ const ChatUserMessage = ({message}) => {
             allowFullScreen 
             src={`https://www.youtube.com/embed/${srcURL}?autoplay=0&enablejsapi=1&rel=0&version=3`}
           ></iframe>
+        </div>
+      }
+      {!hasURL && ogMeta.success && 
+        <div className={styles.ogCard__container}>
+          <a href={ogMeta.requestUrl} className={styles.ogCard__link} target="_blank" rel="noopener noreferrer">
+            <div className={styles.ogCard__image__container}>
+              <img src={ogMeta.ogImage.url} alt={ogMeta.ogTitle} className={styles.ogCard__image} />
+            </div>
+            <div className={styles.ogCard__description__container}>
+              <p className={styles.ogCard__description}>{ogMeta.ogTitle}</p>
+            </div>
+          </a>
         </div>
       }
     </div>

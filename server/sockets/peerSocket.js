@@ -85,9 +85,9 @@ const peerSocketConnection = (server) => {
         socket.emit("messages-list", lastMessages);
       });
 
-      socket.on("send-message", (message) => {
-        addMessage(roomID, message);
-        io.to(roomID).emit("message-received", message);
+      socket.on("send-message", async (message) => {
+        const newMessage = await addMessage(roomID, message);
+        io.to(roomID).emit("message-received", newMessage);
       });
 
       socket.on("get-older-messages", offset => {

@@ -7,7 +7,7 @@ const ChatUser = ({messageData}) => {
 
   const renderMessage = () => {
     return messageData.message.map((message, i) => {
-      return <ChatUserMessage key={messageData.id[i]} message={message} />
+      return <ChatUserMessage key={messageData.id[i]} message={message} ogMeta={messageData.ogMeta[i]} />
     });
   };
 

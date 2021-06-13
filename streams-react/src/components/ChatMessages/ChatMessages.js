@@ -67,18 +67,22 @@ const ChatMessages = () => {
     let currentUser = messages[0];
     currentUser.message = [currentUser.message];
     currentUser.id = [currentUser.id];
+    currentUser.ogMeta = [currentUser.ogMeta];
 
     for(let i = 1; i < messages.length; i++) {
       if(!Array.isArray(currentUser.message)) currentUser.message = [currentUser.message];
       if(messages[i].streamID === currentUser.streamID) {
         currentUser.message = [...currentUser.message, messages[i].message];
         currentUser.id = [...currentUser.id, messages[i].id];
+        currentUser.ogMeta = [...currentUser.ogMeta, messages[i].ogMeta];
+        
       }
       else {
         newMessages.push(currentUser);
         currentUser = messages[i];
         currentUser.message = [currentUser.message];
         currentUser.id = [currentUser.id];
+        currentUser.ogMeta = [currentUser.ogMeta];
       }
     }
     
