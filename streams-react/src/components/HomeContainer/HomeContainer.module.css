@@ -6,7 +6,8 @@
   padding: 30px 0;
   min-height: calc(100vh - 70px);
   align-items: center;
-  background-color: #333745;
+  background-color: #EDF7F6;
+  /* background-color: #F7F4F3; */
   animation: hideOverflow 0.55s ease-out;
 }
 .forms {
