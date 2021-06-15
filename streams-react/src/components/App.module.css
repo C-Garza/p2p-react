@@ -10,7 +10,12 @@ body {
   box-sizing: inherit;
 }
 h1 {
+  margin-top: 25px;
+  margin-bottom: 25px;
   font-size: 2.3em;
+  font-family: "Roboto Slab", Arial, Helvetica, sans-serif;
+}
+h2 {
   font-family: "Roboto Slab", Arial, Helvetica, sans-serif;
 }
 a {
