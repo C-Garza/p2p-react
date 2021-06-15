@@ -1,5 +1,6 @@
 import {useState, useEffect, useContext} from "react";
 import EditWrapper from "../EditWrapper/EditWrapper";
+import {useHistory} from "react-router-dom";
 import useForm from "../../hooks/useForm";
 import useStateToLocalStorage from "../../hooks/useStateToLocalStorage";
 import { SocketContext } from "../../context/SocketContext";
@@ -8,6 +9,7 @@ import {nameInput} from "../../data/roomInputs";
 import VideoControlsButton from "../VideoControlsButton/VideoControlsButton";
 
 const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted, handleFullScreen, isFullScreen}) => {
+  const history = useHistory();
   const {setDisplayName, stream: myStream, setHasWebcam, shareScreen, setShareScreen} = useContext(SocketContext);
   const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 1, username: displayName});
   const [isMuted, setMuted] = useState(gainStreams?.isHost ? true : false);
@@ -91,6 +93,10 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
     }
   };
 
+  const handleDisconnectClick = () => {
+    history.push("/");
+  };
+
   const handleNameClick = () => {
     if(!values.username.length && !isEditing) {
       setIsEditing(true);
@@ -155,6 +161,14 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
       <div className={`${styles.controls__tray} ${isFocused ? styles["controls__tray--active"] : ""}`}>
         {isMyStream
           ? <>
+              <VideoControlsButton
+                type="button" 
+                buttonClass="disconnect__button"
+                title="Disconnect from call"
+                iconClass={`fas fa-phone-slash ${styles.disconnect__icon}`}
+                handleClick={handleDisconnectClick}
+                handleFocus={handleControlsFocus}
+              />
               <VideoControlsButton 
                 buttonClass="video__button"
                 title={playVideo ? "Stop Video" : "Show Video"}

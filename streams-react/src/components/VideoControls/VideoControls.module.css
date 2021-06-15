@@ -40,7 +40,7 @@
   align-items: center;
   margin-left: auto;
   width: 50%;
-  transform: translateY(200%);
+  transform: translateY(270%);
   min-height: calc(1.2rem + 7px);
   transition: all 0.35s;
 }
@@ -56,6 +56,10 @@ div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
 .controls__tray--active {
   transform: translateY(0);
   transition: none;
+}
+.disconnect__icon {
+  padding-right: 1px;
+  padding-bottom: 1px;
 }
 .button--stop {
   color: #DA3E52;
