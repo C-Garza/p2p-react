@@ -4,6 +4,7 @@
   border: 2px solid #212121;
   border-radius: 5px;
   width: 100%;
+  background-color: white;
 }
 .message {
   padding: 5px;

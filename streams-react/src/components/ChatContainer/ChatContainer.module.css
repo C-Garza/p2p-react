@@ -3,7 +3,7 @@
   right: 0;
   height: calc(100vh - 70px);
   width: 400px;
-  background-color: white;
+  background-color: #EEEEEE;
   border: 2px solid #212121;
   transform: translateX(100%);
   transition: all 0.35s;

@@ -16,7 +16,7 @@ const nameInput = [
     name: "username",
     required: true,
     id: "username-1",
-    // max: "32",
+    max: "32",
     autoComplete: "on"
   }
 ];

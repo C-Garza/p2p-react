@@ -4,6 +4,7 @@
   justify-content: center;
   width: 100%;
   border-top: 2px solid #212121;
+  background-color: white;
 }
 .input__container {
   flex: 0.75;
