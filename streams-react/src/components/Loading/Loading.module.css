@@ -2,8 +2,35 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-top: 15px;
 }
 .message {
   
+}
+.loading {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  border-radius: 100%;
+  border: 3px solid #DA3E52;
+  animation: spinner 0.75s linear infinite;
+}
+.loading:before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  height: 15px;
+  width: 15px;
+  background-color: #333745;
+  transform: rotate(45deg);
+}
+@keyframes spinner {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }

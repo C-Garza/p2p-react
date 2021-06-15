@@ -19,7 +19,7 @@
   height: 30px;
   width: 30px;
   border-radius: 100%;
-  border: 3px solid red;
+  border: 3px solid #DA3E52;
   animation: spinner 0.75s linear infinite;
 }
 .loading:before {

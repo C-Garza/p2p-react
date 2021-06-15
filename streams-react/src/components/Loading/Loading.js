@@ -3,7 +3,8 @@ import styles from "./Loading.module.css";
 const Loading = () => {
   return(
     <div className={styles.container}>
-      <p className={styles.message}>Loading...</p>
+      <h2 className={styles.message}>Connecting to server...</h2>
+      <div className={styles.loading}></div>
     </div>
   );
 };
