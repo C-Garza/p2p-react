@@ -35,6 +35,7 @@ const ChatContextProvider = ({children}) => {
       }
       socket.on("joined-room", handleJoinedRoom);
       socket.on("message-received", handleMessageReceived);
+      socket.on("updated-message", handleUpdatedMessage);
       socket.on("older-messages-received", handleOlderMessagesReceived);
       socket.on("messages-list", handleMessagesList);
       socket.on("all-older-messages-received", handleAllOlderMessagesReceived);
@@ -44,6 +45,7 @@ const ChatContextProvider = ({children}) => {
       if(socket) {
         socket.removeListener("joined-room", handleJoinedRoom);
         socket.removeListener("message-received", handleMessageReceived);
+        socket.removeListener("updated-message", handleUpdatedMessage);
         socket.removeListener("older-messages-received", handleOlderMessagesReceived);
         socket.removeListener("messages-list", handleMessagesList);
         socket.removeListener("all-older-messages-received", handleAllOlderMessagesReceived);
@@ -59,6 +61,13 @@ const ChatContextProvider = ({children}) => {
 
   const handleMessageReceived = (message) => {
     setMessageList(messages => [...messages, message]);
+  };
+
+  const handleUpdatedMessage = (message) => {
+    setMessageList(msgs => msgs.map(msg => {
+      if(msg.id === message.id) return message;
+      return msg;
+    }));
   };
 
   const handleOlderMessagesReceived = (messages) => {

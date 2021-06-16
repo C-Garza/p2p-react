@@ -1,7 +1,14 @@
 const socketio = require("socket.io");
 const {addUser, setUserHost, changeUserName, changeWebcamStatus, removeUser, getUsersInRoom} = require("../utils/users");
 const {addRoom, updateRoom, getRoom, removeRoom} = require("../utils/rooms");
-const {addMessageRoom, addMessage, getRoomMessages, removeMessageRoom} = require("../utils/messages");
+const {
+  addMessageRoom, 
+  addMessage, 
+  updateMessageOG,
+  messageHasLink,
+  getRoomMessages, 
+  removeMessageRoom
+} = require("../utils/messages");
 
 const peerSocketConnection = (server) => {
   const io = socketio(server, {
@@ -86,8 +93,13 @@ const peerSocketConnection = (server) => {
       });
 
       socket.on("send-message", async (message) => {
-        const newMessage = await addMessage(roomID, message);
+        const newMessage = addMessage(roomID, message);
         io.to(roomID).emit("message-received", newMessage);
+        const linksArray = messageHasLink(roomID, newMessage);
+        if(linksArray) {
+          const updatedMessage = await updateMessageOG(roomID, newMessage, linksArray);
+          io.to(roomID).emit("updated-message", updatedMessage);
+        }
       });
 
       socket.on("get-older-messages", offset => {
