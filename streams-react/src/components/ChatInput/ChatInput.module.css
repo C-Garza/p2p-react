@@ -58,6 +58,11 @@
 .send__button:focus {
   color: #00E676;
 }
+@media(max-width: 400px) {
+  .emoji__mart {
+    transform: translate(-77%, -105%);
+  }
+}
 @keyframes sent {
   0% {
     transform: scale(1);

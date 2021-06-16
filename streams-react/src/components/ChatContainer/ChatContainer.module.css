@@ -2,7 +2,10 @@
   position: fixed;
   right: 0;
   height: calc(100vh - 70px);
-  width: 400px;
+  /* width: 400px; */
+  width: 20%;
+  min-width: 400px;
+  max-width: 500px;
   background-color: #EEEEEE;
   border: 2px solid #212121;
   transform: translateX(100%);
@@ -49,6 +52,27 @@
 }
 .hidden {
   display: none;
+}
+/*****
+MEDIA QUERIES
+*****/
+@media(max-width: 1200px) {
+  .container {
+    min-width: 350px;
+  }
+}
+@media(max-width: 1000px) {
+  .container {
+    min-width: 300px;
+  }
+}
+@media(max-width: 600px) {
+  .container {
+    min-width: none;
+    max-width: none;
+    width: 100%;
+    z-index: 1;
+  }
 }
 @keyframes rotateChevron {
   0% {

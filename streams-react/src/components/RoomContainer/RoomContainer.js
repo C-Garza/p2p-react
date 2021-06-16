@@ -21,7 +21,7 @@ const RoomContainer = () => {
     hasPeerError,
     hasSocketError
   } = useContext(SocketContext);
-  const {isChatOpen} = useContext(ChatContext);
+  const {isChatOpen, chatDimensions} = useContext(ChatContext);
   const location = useLocation();
   const [userName] = useStateToLocalStorage("userName");
   const [roomName, setRoomName] = useStateToLocalStorage("roomName");
@@ -43,7 +43,10 @@ const RoomContainer = () => {
   }, [setParams, roomID, location]);
 
   return(
-    <div className={`${styles.container} ${isChatOpen ? styles["container--shrink"] : ""}`}>
+    <div 
+      className={styles.container}
+      style={{paddingRight: isChatOpen ? chatDimensions.width : 0}}
+    >
       <VideoRoomHeader room={hostRoomName ? hostRoomName : roomName} setRoomName={setRoomName} isHost={isHost} />
       <VideoContainer 
         videos={videoStreams} 

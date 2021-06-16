@@ -5,6 +5,8 @@
   min-height: calc(100vh - 70px);
   background-color: #333745;
 }
-.container--shrink {
-  padding-right: 400px;
+@media(max-width: 600px) {
+  .container {
+    padding-right: 0 !important;
+  }
 }

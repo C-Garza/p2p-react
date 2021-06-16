@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
   border-bottom: 2px solid #212121;
   padding: 5px;
   padding-bottom: 10px;
@@ -14,16 +15,32 @@
 }
 .chat__header {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   max-height: 100px;
   width: 100%;
   margin-top: 10px;
   margin-bottom: 10px;
+  padding-right: 2em;
+  padding-left: 2em;
   text-decoration: underline;
   overflow: hidden;
   text-align: center;
 }
 .chat__online {
   align-self: flex-start;
+}
+.close__button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #EEEEEE;
+  cursor: pointer;
+  transition: all 0.1s ease-out;
+}
+.close__button:hover, .close__button:focus {
+  color: white;
+}
+.close__icon {
+  font-size: 2em;
 }
