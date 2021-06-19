@@ -4,7 +4,7 @@ const VideoControlsButton = ({buttonClass, title, iconClass, handleClick, handle
   return(
     <button 
       type="button" 
-      className={`${styles[buttonClass]} ${styles.control__button}`} 
+      className={`${buttonClass} ${styles.control__button}`} 
       title={title}
       onClick={handleClick}
       onFocus={handleFocus}

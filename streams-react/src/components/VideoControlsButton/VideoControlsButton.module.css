@@ -4,6 +4,7 @@
   font-size: 1.2rem;
   color: #EEEEEE;
   cursor: pointer;
+  pointer-events: all;
   transition: all 0.08s ease;
 }
 .control__button:hover {
@@ -13,17 +14,4 @@
 .control__button:focus {
   color: white;
   transform: scale(1.1);
-}
-.disconnect__button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background-color: #DA3E52;
-  border-radius: 100%;
-  border: 2px solid #212121;
-  width: 40px;
-  height: 40px;
 }

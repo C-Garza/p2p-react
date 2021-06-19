@@ -3,8 +3,22 @@
   align-items: center;
   position: absolute;
   bottom: 0;
-  /* width: 100%; */
   width: 80%;
+}
+.formDisplayName {
+  max-width: 35%;
+  margin: 0;
+  margin-left: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.formDisplayName--active {
+  position: relative;
+  max-width: 45%;
+  padding-left: 5px;
+  padding-right: 20px;
+  border-radius: 5px;
+  background-color: rgba(0,0,0,0.8);
 }
 .displayname {
   position: relative;
@@ -39,7 +53,10 @@
   justify-content: flex-end;
   align-items: center;
   margin-left: auto;
+  position: absolute;
   width: 50%;
+  width: 100%;
+  pointer-events: none;
   transform: translateY(270%);
   min-height: calc(1.2rem + 7px);
   transition: all 0.35s;
@@ -57,9 +74,32 @@ div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
   transform: translateY(0);
   transition: none;
 }
-.disconnect__icon {
-  padding-right: 1px;
-  padding-bottom: 1px;
+.disconnect__container {
+  position: absolute;
+  width: 100%;
+  max-width: 750px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+.disconnect__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #DA3E52;
+  border-radius: 100%;
+  border: 2px solid #212121;
+  min-width: auto;
+  height: 0;
+  width: var(--disconnect__width);
+  pointer-events: all;
+}
+.disconnect__button.disconnect__button__padding {
+  padding-top: calc((var(--disconnect__width) / 2) - 2px);
+  padding-bottom: calc((var(--disconnect__width) / 2) - 2px);
 }
 .button--stop {
   color: #DA3E52;
@@ -78,6 +118,7 @@ div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
   padding-top: 2px;
   font-size: 1.1rem;
   overflow: hidden;
+  pointer-events: all;
   transition: all 0.18s ease;
 }
 .volume__controls:hover {
@@ -88,6 +129,7 @@ div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
 }
 .slider {
   position: absolute;
+  width: 200%;
   transform: rotate(-90deg) translateX(65%);
   transition: all 0.35s;
 }
@@ -106,6 +148,9 @@ div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
 }
 .volume {
   font-size: 1.2em;
+}
+.controls__icon {
+  font-size: var(--controls__size);
 }
 .hidden {
   display: none;

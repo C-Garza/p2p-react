@@ -8,7 +8,7 @@ import styles from "./VideoControls.module.css";
 import {nameInput} from "../../data/roomInputs";
 import VideoControlsButton from "../VideoControlsButton/VideoControlsButton";
 
-const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted, handleFullScreen, isFullScreen}) => {
+const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted, handleFullScreen, isFullScreen, videoWidth}) => {
   const history = useHistory();
   const {setDisplayName, stream: myStream, setHasWebcam, shareScreen, setShareScreen} = useContext(SocketContext);
   const {values, setValues, handleChange, clearInput} = useForm({volume: gainStreams?.isHost ? 0 : 1, username: displayName});
@@ -136,64 +136,82 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
   };
 
   const volumeTitle = Math.floor(values.volume * 100);
+  let controlsSize = "1.2rem";
+  let disconnectWidth = "8%";
+  if(videoWidth <= 600) controlsSize = "1rem";
+  if(videoWidth <= 500) {
+    controlsSize = "0.95rem";
+    disconnectWidth = "10%";
+  }
+  if(videoWidth <= 400) controlsSize = "0.9rem";
 
   return(
-    <div className={styles.video__tray} onDoubleClick={handleDoubleClick}>
-      <EditWrapper 
-        inputs={formInputs} 
-        handleChange={handleChange} 
-        clearInput={clearInput}
-        handleSubmit={handleSubmit}
-        handleClick={handleNameClick}
-        isEditing={isEditing}
-        hidden={true}
-        formStyles={isEditing ? "formDisplayName--active" : "formDisplayName"}
-      >
-        <button 
-          type="button" 
-          className={`${styles.displayname} ${isMyStream ? "" : styles["displayName--disabled"]}`} 
-          onClick={handleNameClick}
-          disabled={!isMyStream}
+    <div className={styles.video__tray} 
+      style={{
+        width: `${videoWidth <= 450 ? "100%" : ""}`, 
+        "--controls__size": `${controlsSize}`,
+        "--disconnect__width": `${disconnectWidth}`
+      }} 
+      onDoubleClick={handleDoubleClick}
+    >
+      <div className={`${isEditing ? styles["formDisplayName--active"] : styles.formDisplayName}`}>
+        <EditWrapper 
+          inputs={formInputs} 
+          handleChange={handleChange} 
+          clearInput={clearInput}
+          handleSubmit={handleSubmit}
+          handleClick={handleNameClick}
+          isEditing={isEditing}
+          hidden={true}
         >
-          {displayName || "Silly Goose"}
-        </button>
-      </EditWrapper>
+          <button 
+            type="button" 
+            className={`${styles.displayname} ${isMyStream ? "" : styles["displayName--disabled"]}`} 
+            onClick={handleNameClick}
+            disabled={!isMyStream}
+          >
+            {displayName || "Silly Goose"}
+          </button>
+        </EditWrapper>
+      </div>
       <div className={`${styles.controls__tray} ${isFocused ? styles["controls__tray--active"] : ""}`}>
         {isMyStream
           ? <>
+              <div className={styles.disconnect__container}>
               <VideoControlsButton
                 type="button" 
-                buttonClass="disconnect__button"
+                buttonClass={`${styles.disconnect__button} ${styles.disconnect__button__padding}`}
                 title="Disconnect from call"
-                iconClass={`fas fa-phone-slash ${styles.disconnect__icon}`}
+                iconClass={`fas fa-phone-slash ${styles.controls__icon} ${styles.disconnect__icon}`}
                 handleClick={handleDisconnectClick}
                 handleFocus={handleControlsFocus}
               />
+              </div>
               <VideoControlsButton 
                 buttonClass="video__button"
                 title={playVideo ? "Stop Video" : "Show Video"}
-                iconClass={`fas ${!playVideo ? `fa-video-slash ${styles["button--stop"]}` : `fa-video`}`}
+                iconClass={`fas ${styles.controls__icon} ${!playVideo ? `fa-video-slash ${styles["button--stop"]}` : `fa-video`}`}
                 handleClick={handleVideoClick}
                 handleFocus={handleControlsFocus}
               />
               <VideoControlsButton 
                 buttonClass="mic__button"
                 title={playMic ? "Mute" : "Unmute"}
-                iconClass={`fas ${!playMic ? `fa-microphone-slash ${styles["button--stop"]}` : `fa-microphone`}`}
+                iconClass={`fas ${styles.controls__icon} ${!playMic ? `fa-microphone-slash ${styles["button--stop"]}` : `fa-microphone`}`}
                 handleClick={handleMicClick}
                 handleFocus={handleControlsFocus}
               />
               <VideoControlsButton 
                 buttonClass="screen__button"
                 title={shareScreen ? "Stop Screen Share" : "Share Screen"}
-                iconClass={`fas fa-desktop ${!shareScreen ? "" : styles["button--stop"]}`}
+                iconClass={`fas fa-desktop ${styles.controls__icon} ${!shareScreen ? "" : styles["button--stop"]}`}
                 handleClick={handleScreenClick}
                 handleFocus={handleControlsFocus}
               />
             </>
           : <div className={`${styles.volume__controls} ${isVolumeFocused ? styles[`volume__controls--focus`]: ""}`}>
               <button type="button" className={styles.volume__button} onClick={handleVolumeClick} onFocus={handleControlsFocus} onBlur={handleControlsFocus}>
-                <i className={`fas ${!isMuted ? `fa-volume-up`: `fa-volume-mute`} ${styles.volume}`}></i>
+                <i className={`fas ${styles.controls__icon} ${!isMuted ? `fa-volume-up`: `fa-volume-mute`} ${styles.volume}`}></i>
               </button>
               <input 
                 className={styles.slider}
@@ -213,7 +231,7 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
         <VideoControlsButton 
           buttonClass="fullscreen__button"
           title={isFullScreen ? "Exit Fullscreen" : "Fullscreen"}
-          iconClass={`fas ${!isFullScreen ? "fa-expand" : "fa-compress"}`}
+          iconClass={`fas ${styles.controls__icon} ${!isFullScreen ? "fa-expand" : "fa-compress"}`}
           handleClick={handleFullScreen}
           handleFocus={handleControlsFocus}
         />

@@ -50,7 +50,6 @@ const VideoRoomHeader = ({room, setRoomName, isHost}) => {
               handleSubmit={handleSubmit}
               handleClick={handleClick}
               isEditing={isEditing}
-              formStyles={"formRoomHeader"}
             >
               <h1 className={styles.heading}>{room}</h1>
             </EditWrapper>

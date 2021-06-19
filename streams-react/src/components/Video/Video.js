@@ -102,6 +102,7 @@ const Video = ({stream, displayName, isTalking, gainStreams, hasWebcam, containe
           handleMuted={handleMuted}
           handleFullScreen={handleFullScreen}
           isFullScreen={isFullScreen}
+          videoWidth={containerStyles.width}
         />
       </div>
     </div>
