@@ -1,8 +1,7 @@
 .container {
   position: fixed;
   right: 0;
-  height: calc(100vh - 70px);
-  /* width: 400px; */
+  height: calc(100% - 70px);
   width: 20%;
   min-width: 400px;
   max-width: 500px;
