@@ -12,6 +12,12 @@
 .container {
   position: relative;
   margin-left: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.logo__container {
+  position: relative;
 }
 .logo {
   position: relative;
@@ -30,7 +36,89 @@
   transition: all 0.25s;
   background-color: #40476D;
 }
-.container:hover .underline {
+.logo__container:hover .underline {
   background-color: #FCFFFC;
   transform: scaleX(1);
+}
+.hamburger {
+  margin-left: auto;
+  margin-right: 15px;
+  border: 3px solid #EEEEEE;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+}
+.line {
+  width: 25px;
+  height: 4px;
+  margin: 7px;
+  border-radius: 15px;
+  background-color: #EEEEEE;
+}
+.hamburger:hover, .hamburger:focus {
+  border: 3px solid white;
+}
+.hamburger:hover .line, .hamburger:focus .line {
+  background-color: white;
+}
+.line__one {
+  
+}
+.line__two {
+  
+}
+.line__three {
+  
+}
+.line__one--open {
+  animation: lineOneOpen 0.35s forwards ease-in;
+}
+.line__two--open {
+  animation: lineTwoOpen 0.35s forwards ease-in;
+}
+.line__three--open {
+  animation: lineThreeOpen 0.35s forwards ease-in;
+}
+
+.line__one--closed {
+  animation: lineOneOpen 0.35s reverse ease-in;
+}
+.line__two--closed {
+  animation: lineTwoOpen 0.35s reverse ease-in;
+}
+.line__three--closed {
+  animation: lineThreeOpen 0.35s reverse ease-in;
+}
+.hidden {
+  display: none;
+}
+@keyframes lineOneOpen {
+  0% {
+    transform: translateY(0deg);
+  }
+  50% {
+    transform: translateY(calc(100% + 7px));
+  }
+  100% {
+    transform: translateY(calc(100% + 7px)) rotate(45deg);
+  }
+}
+@keyframes lineTwoOpen {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+@keyframes lineThreeOpen {
+  0% {
+    transform: translateY(0deg);
+  }
+  50% {
+    transform: translateY(calc(-100% - 7px));
+  }
+  100% {
+    transform: translateY(calc(-100% - 7px)) rotate(-45deg);
+  }
 }
