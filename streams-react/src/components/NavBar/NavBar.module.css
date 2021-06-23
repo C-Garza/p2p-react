@@ -47,6 +47,7 @@
   border-radius: 5px;
   cursor: pointer;
   position: relative;
+  transition: all 0.1s ease-out;
 }
 .line {
   width: 25px;
@@ -54,6 +55,7 @@
   margin: 7px;
   border-radius: 15px;
   background-color: #EEEEEE;
+  transition: all 0.1s ease-out;
 }
 .hamburger:hover, .hamburger:focus {
   border: 3px solid white;
