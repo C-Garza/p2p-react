@@ -79,3 +79,6 @@ iframe {
   width: 100%;
   overflow: hidden;
 }
+.hidden {
+  display: none;
+}

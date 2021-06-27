@@ -1,6 +1,6 @@
 import styles from "./VideoControlsButton.module.css";
 
-const VideoControlsButton = ({buttonClass, title, iconClass, handleClick, handleFocus}) => {
+const VideoControlsButton = ({buttonClass, spanClass, title, iconClass, handleClick, handleFocus}) => {
   return(
     <button 
       type="button" 
@@ -10,7 +10,7 @@ const VideoControlsButton = ({buttonClass, title, iconClass, handleClick, handle
       onFocus={handleFocus}
       onBlur={handleFocus}
     >
-      <i className={iconClass}></i>
+      <span className={`${spanClass}`}><i className={iconClass}></i></span>
     </button>
   );
 };

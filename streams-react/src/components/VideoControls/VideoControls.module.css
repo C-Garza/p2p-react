@@ -86,20 +86,23 @@ div[data-video-stream="video-stream"]:hover + .video__tray .controls__tray {
   pointer-events: none;
 }
 .disconnect__button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: #DA3E52;
   border-radius: 100%;
   border: 2px solid #212121;
   min-width: auto;
-  height: 0;
+  height: 0px;
   width: var(--disconnect__width);
   pointer-events: all;
 }
 .disconnect__button.disconnect__button__padding {
   padding-top: calc((var(--disconnect__width) / 2) - 2px);
   padding-bottom: calc((var(--disconnect__width) / 2) - 2px);
+}
+.disconnect__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 .button--stop {
   color: #DA3E52;

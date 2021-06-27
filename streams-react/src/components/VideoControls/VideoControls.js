@@ -181,6 +181,7 @@ const VideoControls = ({stream, hasWebcam, displayName, gainStreams, handleMuted
               <VideoControlsButton
                 type="button" 
                 buttonClass={`${styles.disconnect__button} ${styles.disconnect__button__padding}`}
+                spanClass={`${styles.disconnect__inner}`}
                 title="Disconnect from call"
                 iconClass={`fas fa-phone-slash ${styles.controls__icon} ${styles.disconnect__icon}`}
                 handleClick={handleDisconnectClick}

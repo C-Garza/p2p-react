@@ -30,17 +30,3 @@
 .chat__online {
   align-self: flex-start;
 }
-.close__button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: #EEEEEE;
-  cursor: pointer;
-  transition: all 0.1s ease-out;
-}
-.close__button:hover, .close__button:focus {
-  color: white;
-}
-.close__icon {
-  font-size: 2em;
-}

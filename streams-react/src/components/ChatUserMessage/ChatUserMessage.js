@@ -76,8 +76,8 @@ const ChatUserMessage = ({message, ogMeta}) => {
       {!hasURL && ogMeta.success && 
         <div className={styles.ogCard__container}>
           <a href={ogMeta.requestUrl} className={styles.ogCard__link} target="_blank" rel="noopener noreferrer">
-            <div className={styles.ogCard__image__container}>
-              <img src={ogMeta.ogImage.url} alt={ogMeta.ogTitle} className={styles.ogCard__image} />
+            <div className={`${styles.ogCard__image__container} ${ogMeta.ogImage ? "" : styles.hidden}`}>
+              <img src={ogMeta.ogImage?.url} alt={ogMeta.ogTitle} className={styles.ogCard__image} />
             </div>
             <div className={styles.ogCard__description__container}>
               <p className={styles.ogCard__description}>{ogMeta.ogTitle}</p>
