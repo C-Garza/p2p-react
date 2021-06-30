@@ -70,7 +70,6 @@ const SocketContextProvider = ({children}) => {
             });
             
             replaceVideoStream(stream, currentStream, peer);
-            setHasWebcam(true);
           })
           .catch(e => {
             setShareScreen(false);
@@ -81,7 +80,6 @@ const SocketContextProvider = ({children}) => {
         navigator.mediaDevices.getUserMedia({video: {width: {min: 640}, height: {min: 480}}})
         .then(currentStream => {
           replaceVideoStream(stream, currentStream, peer);
-          setHasWebcam(true);
         })
         .catch(e => {
           const video = fakeVideo();
