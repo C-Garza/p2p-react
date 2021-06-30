@@ -29,7 +29,6 @@ const CreateRoom = ({header, inputs}) => {
       setUsername(values.username);
       setRoomName(values.room);
       history.push(`/room/${uuid}`);
-      console.log(uuid);
     } catch(e) {
       setFetchError(e);
       console.log(e);

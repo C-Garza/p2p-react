@@ -197,7 +197,6 @@ const SocketContextProvider = ({children}) => {
         connectToNewUser(userID, stream);
       });
       socket.on("user-disconnected", (userID) => {
-        console.log("User has disconnected!" + userID);
         const peers = peersRefs.current;
         if(peers[userID]) {
           peers[userID].call.close();

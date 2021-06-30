@@ -29,7 +29,6 @@ const peerSocketConnection = (server) => {
   
   io.on("connection", socket => {
     socket.on("join-room", (roomID, userID, displayName, roomName) => {
-      console.log(roomID, userID, displayName, roomName);
       socket.join(roomID);
       
       addUser(userID, socket.id, displayName, roomID, false);
